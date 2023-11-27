@@ -62,7 +62,7 @@ const Component5 = () => {
           <p className="text-sm text-slate-500 my-3 mb-4">
             Real Time Best city rankings
           </p>
-          <div className="select">
+          <div className="select flex flex-row gap-4">
             <select
               className="border border-gray-300 p-2 rounded-md mt-3"
               onChange={handleChange}

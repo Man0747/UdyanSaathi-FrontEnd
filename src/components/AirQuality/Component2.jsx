@@ -1,7 +1,80 @@
-import React from "react";
+// eslint-disable-next-line no-unused-vars
+import React, { useState, useEffect } from 'react';
 import AnimatedBackground from "../animations/AnimatedBackground";
 
-const Component2 = () => {
+const Component2 = ({selectedSearch}) => {
+  const [state, setState] = useState({
+    value: 60, // Default initial value
+    color: 'transparent',
+  });
+
+  const [pollution, setPollution] = useState([]);
+
+  useEffect(() => {
+    getPollutionData();
+  }, [selectedSearch]);
+
+  const getPollutionData = async () => {
+    try {
+      const apiurl = localStorage.getItem('url');
+      const response = await fetch(apiurl);
+      const data = await response.json();
+      console.log('DATA:', data);
+      setPollution(data);
+
+      // Set state.value to the AQI value from the first data entry
+      if (data.length > 0) {
+        setState((prevState) => ({
+          ...prevState,
+          value: data[0].AQI,
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const setColorForValue = (value) => {
+    let color;
+
+    if (value <= 50) {
+      color = '#24c45c';
+    } else if (value <= 100) {
+      color = '#ecb40c';
+    } else if (value <= 200) {
+      color = '#fc7414';
+    } else if (value <= 300) {
+      color = '#ec4444';
+    } else if (value <= 400) {
+      color = '#7c1c1c';
+    } else {
+      color = '#5c1c84';
+    }
+
+    setState((prevState) => ({
+      ...prevState,
+      color,
+    }));
+  };
+
+  useEffect(() => {
+    setColorForValue(state.value);
+  }, [state.value]);
+
+  // const formatDate = (dateString) => {
+  //   const options = {
+  //     year: 'numeric',
+  //     month: 'short',
+  //     day: 'numeric',
+  //     hour: 'numeric',
+  //     minute: 'numeric',
+  //     timeZone: 'UTC',
+  //   };
+
+  //   const formattedDate = new Date(dateString).toLocaleString('en-US', options);
+
+  //   return formattedDate;
+  // };
   return (
     <>
       <div className="C2-container relative rounded-2xl p-9">
@@ -9,25 +82,34 @@ const Component2 = () => {
           <AnimatedBackground />
         </div>
         <div className="C2-txt-1 mb-7 flex justify-center">
-          <p>Major Air pollutants in Noida</p>
+        {pollution.map((pol,) =>(
+              <p key={pol.id}>Major Air pollutants in {pol.City}</p>
+               ))}
         </div>
         <div className="poll-container flex flex-col gap-5">
           <div className="poll-row-1 flex flex-row justify-evenly">
             <div className="ic-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="34"
-                height="20"
-                viewBox="0 0 46 34"
-                fill="none"
-              >
-                <path
-                  d="M11.5418 33.6667C8.38211 33.6667 5.68211 32.573 3.44183 30.3855C1.20155 28.198 0.0821085 25.5243 0.0834974 22.3646C0.0834974 19.6563 0.899469 17.2431 2.53141 15.125C4.16336 13.007 6.29877 11.6528 8.93766 11.0625C9.80572 7.8681 11.5418 5.28129 14.146 3.30212C16.7502 1.32296 19.7016 0.333374 23.0002 0.333374C27.0627 0.333374 30.5092 1.74865 33.3397 4.57921C36.1703 7.40976 37.5849 10.8556 37.5835 14.9167C39.9793 15.1945 41.9675 16.2278 43.5481 18.0167C45.1286 19.8056 45.9182 21.8973 45.9168 24.2917C45.9168 26.8959 45.005 29.1098 43.1814 30.9334C41.3578 32.757 39.1446 33.6681 36.5418 33.6667H11.5418Z"
-                  fill="#85B6FF"
-                />
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="34"
+                    height="20"
+                    viewBox="0 0 46 34"
+                    fill="none"
+                  >
+                     <image
+            href="/pm2.5-icon.webp"
+            width="36"
+            height="40"
+            x="0"
+            y="0"
+            preserveAspectRatio="none"
+        />
               </svg>
-              <p className="ic-txt">260</p>
-              <span className="ic-span">(PM2.5)</span>
+              {pollution.map((pol) =>(
+                  <p key={pol.id} className="ic-txt">
+                    {pol.PM25}<span className="ic-span">(PM2.5)</span>
+                  </p>
+              ))}
             </div>
             <div className="ic-1">
               <svg
@@ -37,14 +119,20 @@ const Component2 = () => {
                 viewBox="0 0 46 34"
                 fill="none"
               >
-                <path
-                  d="M11.5418 33.6667C8.38211 33.6667 5.68211 32.573 3.44183 30.3855C1.20155 28.198 0.0821085 25.5243 0.0834974 22.3646C0.0834974 19.6563 0.899469 17.2431 2.53141 15.125C4.16336 13.007 6.29877 11.6528 8.93766 11.0625C9.80572 7.8681 11.5418 5.28129 14.146 3.30212C16.7502 1.32296 19.7016 0.333374 23.0002 0.333374C27.0627 0.333374 30.5092 1.74865 33.3397 4.57921C36.1703 7.40976 37.5849 10.8556 37.5835 14.9167C39.9793 15.1945 41.9675 16.2278 43.5481 18.0167C45.1286 19.8056 45.9182 21.8973 45.9168 24.2917C45.9168 26.8959 45.005 29.1098 43.1814 30.9334C41.3578 32.757 39.1446 33.6681 36.5418 33.6667H11.5418Z"
-                  fill="#85B6FF"
-                />
-              </svg>
-
-              <p className="ic-txt">260</p>
-              <span className="ic-span">(PM2.5)</span>
+                 <image
+            href="/pm10-icon.webp"
+            width="36"
+            height="40"
+            x="0"
+            y="0"
+            preserveAspectRatio="none"
+        />
+                  </svg>
+                  {pollution.map((pol) =>(
+                  <p key={pol.id}className="ic-txt">
+                    {pol.PM10}<span className="ic-span">(PM10)</span>
+                  </p>
+               ))}
             </div>
             <div className="ic-1">
               <svg
@@ -54,13 +142,20 @@ const Component2 = () => {
                 viewBox="0 0 46 34"
                 fill="none"
               >
-                <path
-                  d="M11.5418 33.6667C8.38211 33.6667 5.68211 32.573 3.44183 30.3855C1.20155 28.198 0.0821085 25.5243 0.0834974 22.3646C0.0834974 19.6563 0.899469 17.2431 2.53141 15.125C4.16336 13.007 6.29877 11.6528 8.93766 11.0625C9.80572 7.8681 11.5418 5.28129 14.146 3.30212C16.7502 1.32296 19.7016 0.333374 23.0002 0.333374C27.0627 0.333374 30.5092 1.74865 33.3397 4.57921C36.1703 7.40976 37.5849 10.8556 37.5835 14.9167C39.9793 15.1945 41.9675 16.2278 43.5481 18.0167C45.1286 19.8056 45.9182 21.8973 45.9168 24.2917C45.9168 26.8959 45.005 29.1098 43.1814 30.9334C41.3578 32.757 39.1446 33.6681 36.5418 33.6667H11.5418Z"
-                  fill="#85B6FF"
-                />
-              </svg>
-              <p className="ic-txt">260</p>
-              <span className="ic-span">(PM2.5)</span>
+                <image
+            href="/so2.webp"
+            width="36"
+            height="40"
+            x="0"
+            y="0"
+            preserveAspectRatio="none"
+        />
+                  </svg>
+                  {pollution.map((pol) =>(
+                  <p key={pol.id}className="ic-txt">
+                    {pol.SO2}<span className="ic-span">(SO2)</span>
+                  </p>
+               ))}
             </div>
           </div>
           <div className="poll-row-2 flex flex-row justify-evenly">
@@ -72,13 +167,20 @@ const Component2 = () => {
                 viewBox="0 0 46 34"
                 fill="none"
               >
-                <path
-                  d="M11.5418 33.6667C8.38211 33.6667 5.68211 32.573 3.44183 30.3855C1.20155 28.198 0.0821085 25.5243 0.0834974 22.3646C0.0834974 19.6563 0.899469 17.2431 2.53141 15.125C4.16336 13.007 6.29877 11.6528 8.93766 11.0625C9.80572 7.8681 11.5418 5.28129 14.146 3.30212C16.7502 1.32296 19.7016 0.333374 23.0002 0.333374C27.0627 0.333374 30.5092 1.74865 33.3397 4.57921C36.1703 7.40976 37.5849 10.8556 37.5835 14.9167C39.9793 15.1945 41.9675 16.2278 43.5481 18.0167C45.1286 19.8056 45.9182 21.8973 45.9168 24.2917C45.9168 26.8959 45.005 29.1098 43.1814 30.9334C41.3578 32.757 39.1446 33.6681 36.5418 33.6667H11.5418Z"
-                  fill="#85B6FF"
-                />
-              </svg>
-              <p className="ic-txt">260</p>
-              <span className="ic-span">(PM2.5)</span>
+                <image
+            href="/CO.webp"
+            width="36"
+            height="40"
+            x="0"
+            y="0"
+            preserveAspectRatio="none"
+        />
+                  </svg>
+                  {pollution.map((pol) =>(
+                  <p key={pol.id}className="ic-txt">
+                    {pol.CO}<span className="ic-span">(CO)</span>
+                  </p>
+               ))}
             </div>
             <div className="ic-1">
               <svg
@@ -88,13 +190,20 @@ const Component2 = () => {
                 viewBox="0 0 46 34"
                 fill="none"
               >
-                <path
-                  d="M11.5418 33.6667C8.38211 33.6667 5.68211 32.573 3.44183 30.3855C1.20155 28.198 0.0821085 25.5243 0.0834974 22.3646C0.0834974 19.6563 0.899469 17.2431 2.53141 15.125C4.16336 13.007 6.29877 11.6528 8.93766 11.0625C9.80572 7.8681 11.5418 5.28129 14.146 3.30212C16.7502 1.32296 19.7016 0.333374 23.0002 0.333374C27.0627 0.333374 30.5092 1.74865 33.3397 4.57921C36.1703 7.40976 37.5849 10.8556 37.5835 14.9167C39.9793 15.1945 41.9675 16.2278 43.5481 18.0167C45.1286 19.8056 45.9182 21.8973 45.9168 24.2917C45.9168 26.8959 45.005 29.1098 43.1814 30.9334C41.3578 32.757 39.1446 33.6681 36.5418 33.6667H11.5418Z"
-                  fill="#85B6FF"
-                />
-              </svg>
-              <p className="ic-txt">260</p>
-              <span className="ic-span">(PM2.5)</span>
+                <image
+            href="/o3.webp"
+            width="36"
+            height="40"
+            x="0"
+            y="0"
+            preserveAspectRatio="none"
+        />
+                  </svg>
+                  {pollution.map((pol) =>(
+                  <p key={pol.id} className="ic-txt">
+                    {pol.OZONE}<span className="ic-span">(OZONE)</span>
+                  </p>
+               ))}
             </div>
             <div className="ic-1">
               <svg
@@ -104,13 +213,20 @@ const Component2 = () => {
                 viewBox="0 0 46 34"
                 fill="none"
               >
-                <path
-                  d="M11.5418 33.6667C8.38211 33.6667 5.68211 32.573 3.44183 30.3855C1.20155 28.198 0.0821085 25.5243 0.0834974 22.3646C0.0834974 19.6563 0.899469 17.2431 2.53141 15.125C4.16336 13.007 6.29877 11.6528 8.93766 11.0625C9.80572 7.8681 11.5418 5.28129 14.146 3.30212C16.7502 1.32296 19.7016 0.333374 23.0002 0.333374C27.0627 0.333374 30.5092 1.74865 33.3397 4.57921C36.1703 7.40976 37.5849 10.8556 37.5835 14.9167C39.9793 15.1945 41.9675 16.2278 43.5481 18.0167C45.1286 19.8056 45.9182 21.8973 45.9168 24.2917C45.9168 26.8959 45.005 29.1098 43.1814 30.9334C41.3578 32.757 39.1446 33.6681 36.5418 33.6667H11.5418Z"
-                  fill="#85B6FF"
-                />
-              </svg>
-              <p className="ic-txt">260</p>
-              <span className="ic-span">(PM2.5)</span>
+                <image
+            href="/no2.webp"
+            width="36"
+            height="40"
+            x="0"
+            y="0"
+            preserveAspectRatio="none"
+        />
+                  </svg>
+                  {pollution.map((pol) =>(
+                  <p key={pol.id}className="ic-txt">
+                    {pol.NO2}<span className="ic-span">(NO2)</span>
+                  </p>
+               ))}
             </div>
           </div>
         </div>
