@@ -72,44 +72,44 @@ const Component4 = () => {
           </div>
           <div className="part-2 flex mt-3 justify-evenly">
             <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Sun</span>
+              <span className="">Wed</span>
               <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">198</h1>
+                <h1 className="text-xl text-[#5e5e5e] font-bold">165</h1>
+                <span className="text-sm text-slate-500 ">AQI</span>
+              </div>
+            </div>
+            <div className="component flex flex-col justify-center items-center gap-3">
+              <span className="">Thur</span>
+              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                <h1 className="text-xl text-[#5e5e5e] font-bold">210</h1>
+                <span className="text-sm text-slate-500 ">AQI</span>
+              </div>
+            </div>
+            <div className="component flex flex-col justify-center items-center gap-3">
+              <span className="">Fri</span>
+              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                <h1 className="text-xl text-[#5e5e5e] font-bold">185</h1>
+                <span className="text-sm text-slate-500 ">AQI</span>
+              </div>
+            </div>
+            <div className="component flex flex-col justify-center items-center gap-3">
+              <span className="">Sat</span>
+              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                <h1 className="text-xl text-[#5e5e5e] font-bold">165</h1>
                 <span className="text-sm text-slate-500 ">AQI</span>
               </div>
             </div>
             <div className="component flex flex-col justify-center items-center gap-3">
               <span className="">Sun</span>
               <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">198</h1>
+                <h1 className="text-xl text-[#5e5e5e] font-bold">150</h1>
                 <span className="text-sm text-slate-500 ">AQI</span>
               </div>
             </div>
             <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Sun</span>
+              <span className="">Mon</span>
               <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">198</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
-            </div>
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Sun</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">198</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
-            </div>
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Sun</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">198</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
-            </div>
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Sun</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">198</h1>
+                <h1 className="text-xl text-[#5e5e5e] font-bold">158</h1>
                 <span className="text-sm text-slate-500 ">AQI</span>
               </div>
             </div>

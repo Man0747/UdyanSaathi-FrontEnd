@@ -77,11 +77,11 @@ const Component2 = ({selectedSearch}) => {
   // };
   return (
     <>
-      <div className="C2-container relative rounded-2xl p-9">
+      <div className="C2-container relative rounded-2xl p-9 ">
         <div className="absolute inset-0 rounded-2xl">
           <AnimatedBackground />
         </div>
-        <div className="C2-txt-1 mb-7 flex justify-center">
+        <div className="C2-txt-1 mb-7 flex justify-center ">
         {pollution.map((pol,) =>(
               <p key={pol.id}>Major Air pollutants in {pol.City}</p>
                ))}
@@ -230,17 +230,15 @@ const Component2 = ({selectedSearch}) => {
             </div>
           </div>
         </div>
-        <div className="C2-txt-2 flex flex-row gap-2 mt-8 items-center">
+        {/* <div className="C2-txt-2 flex flex-row gap-2 mt-8 items-center">
           <div className="rect bg-red-500 p-2 justify-center items-center text-white rounded-xl">
             <p className="text-xs">PM2.5</p>
             <p className="text-2xl">17.3X</p>
           </div>
-          <p>
-            The current PM2.5 concentration in Noida is 17.3 times above the
-            recommended limit given by the WHO 24 hrs air quality guidelines
-            value.
+          
+        </div> */}
+        <p className='mt-36'>
           </p>
-        </div>
       </div>
     </>
   );

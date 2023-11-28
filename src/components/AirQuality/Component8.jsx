@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import data from "../../json/data.json";
 
 const Component8 = () => {
-  const monthsData = data.reduce((acc, entry) => {
+const [ApiData, setApiData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/get-AqiCalData/?format=api&pol_Station=%22Secretariat%2C+Amaravati+-+APPCB%22");
+        const data = await response.json();
+        setApiData(data);
+        console.log("Response:", response);
+        console.log("Data:", data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  const monthsData = ApiData.reduce((acc, entry) => {
     const month = entry.Date.split("-")[1];
     if (!acc[month]) {
       acc[month] = [];
