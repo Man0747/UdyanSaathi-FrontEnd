@@ -19,7 +19,7 @@ const [ApiData, setApiData] = useState([]);
 
     fetchData();
   }, []);
-  const monthsData = ApiData.reduce((acc, entry) => {
+  const monthsData = data.reduce((acc, entry) => {
     const month = entry.Date.split("-")[1];
     if (!acc[month]) {
       acc[month] = [];

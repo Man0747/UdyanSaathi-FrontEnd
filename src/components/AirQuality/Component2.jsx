@@ -77,13 +77,13 @@ const Component2 = ({selectedSearch}) => {
   // };
   return (
     <>
-      <div className="C2-container relative rounded-2xl p-9 ">
+      <div className="C2-container relative rounded-2xl p-9 flex flex-col justify-around h-full">
         <div className="absolute inset-0 rounded-2xl">
           <AnimatedBackground />
         </div>
         <div className="C2-txt-1 mb-7 flex justify-center ">
         {pollution.map((pol,) =>(
-              <p key={pol.id}>Major Air pollutants in {pol.City}</p>
+              <p key={pol.id} className="text-xl text-[#33a0d3]">Major Air pollutants in {pol.City}</p>
                ))}
         </div>
         <div className="poll-container flex flex-col gap-5">
@@ -91,8 +91,8 @@ const Component2 = ({selectedSearch}) => {
             <div className="ic-1">
             <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="34"
-                    height="20"
+                    width="44"
+                    height="30"
                     viewBox="0 0 46 34"
                     fill="none"
                   >
@@ -114,8 +114,8 @@ const Component2 = ({selectedSearch}) => {
             <div className="ic-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="34"
-                height="20"
+                width="44"
+                height="30"
                 viewBox="0 0 46 34"
                 fill="none"
               >
@@ -137,8 +137,8 @@ const Component2 = ({selectedSearch}) => {
             <div className="ic-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="34"
-                height="20"
+                width="44"
+                height="30"
                 viewBox="0 0 46 34"
                 fill="none"
               >
@@ -162,8 +162,8 @@ const Component2 = ({selectedSearch}) => {
             <div className="ic-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="34"
-                height="20"
+                width="44"
+                height="30"
                 viewBox="0 0 46 34"
                 fill="none"
               >
@@ -185,8 +185,8 @@ const Component2 = ({selectedSearch}) => {
             <div className="ic-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="34"
-                height="20"
+                width="44"
+                height="30"
                 viewBox="0 0 46 34"
                 fill="none"
               >
@@ -208,8 +208,8 @@ const Component2 = ({selectedSearch}) => {
             <div className="ic-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="34"
-                height="20"
+                width="44"
+                height="30"
                 viewBox="0 0 46 34"
                 fill="none"
               >
@@ -237,8 +237,8 @@ const Component2 = ({selectedSearch}) => {
           </div>
           
         </div> */}
-        <p className='mt-36'>
-          </p>
+        {/* <p className='mt-36'>
+          </p> */}
       </div>
     </>
   );

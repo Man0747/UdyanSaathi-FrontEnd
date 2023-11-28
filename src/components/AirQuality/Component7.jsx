@@ -69,7 +69,7 @@ const Component7 = () => {
                   <img
                     src={getIconPath(item.City)}
                     alt={`${item.City} icon`}
-                    className="w-5 h-5 mr-2"
+                    className="w-7 h-7 mr-2"
                   />
                   <span>{item.City}</span>
                 </div>

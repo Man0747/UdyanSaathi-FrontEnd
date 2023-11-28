@@ -86,6 +86,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  gap: 10px;
 }
 .ic-txt {
   text-align: center;

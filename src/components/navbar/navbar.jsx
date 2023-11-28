@@ -132,8 +132,8 @@ function Navbar({onSearchSelected }) {
   return (
     <nav className="sticky top-0 z-10 bg-white backdrop-filter backdrop-blur-2xl bg-opacity-10 shadow-2xl border-slate-800">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="/" className="flex items-center">
-          <img src="/logo.jpeg" className="h-8 mr-3 bg-transparent rounded-2xl" alt="Udyan Sathi Logo" />
+        <a href="/" className="flex items-center gap-3">
+          <img src="/logo.jpeg" className="h-8 bg-transparent rounded-2xl" alt="Udyan Sathi Logo" />
           <span className="text-2xl  text-black font-semibold">
             Udyan Sathi
           </span>
@@ -196,7 +196,7 @@ function Navbar({onSearchSelected }) {
             <div className="relative hidden md:block">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                  className="w-4 h-4 text-black "
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -214,7 +214,7 @@ function Navbar({onSearchSelected }) {
               <input
                 type="text"
                 id="search-navbar"
-                className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full p-2 pl-10 text-sm  border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
                 placeholder="Search..."
                 ref={searchInput}
                 value={searchTerm}
