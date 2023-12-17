@@ -67,14 +67,17 @@ const Component1 = ({selectedSearch}) => {
       month: 'short',
       day: 'numeric',
       hour: 'numeric',
-      minute: 'numeric',
+      minute: '2-digit', // Use two digits for minute
+      hour12: true, // Use 12-hour clock
       timeZone: 'UTC',
     };
-
+  
     const formattedDate = new Date(dateString).toLocaleString('en-US', options);
-
+  
     return formattedDate;
   };
+  
+  
   return (
     <>
       <div className="relative rounded-2xl h-full">
@@ -96,7 +99,7 @@ const Component1 = ({selectedSearch}) => {
             <div className="C1-p1 flex flex-col justify-center gap-1">
             {pollution.map((pol) =>(
                   <p key={pol.id} className="text-slate-500 text-xm">
-                    Last Update: {formatDate(pol.Date)}
+                    Last Update: {formatDate(pol.Pol_Date)}
                   </p>
                  ))}
 

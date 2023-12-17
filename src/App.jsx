@@ -8,6 +8,7 @@ import Component6 from "./components/AirQuality/Component6";
 import Component7 from "./components/AirQuality/Component7";
 import Component8 from "./components/AirQuality/Component8";
 import ParentComponent from "./components/AirQuality/parentComponent"
+import Carousel from "./components/Blogs/Carousel";
 import Navbar from "./components/navbar/navbar";
 
 function App() {
@@ -47,6 +48,14 @@ function App() {
       <div className="home-row-5 flex flex-row relative m-5">
         <div className="C8 m-3 rounded-2xl bg-white ">
           <Component8 />
+      
+          
+        </div>
+      </div>
+      <Carousel/>
+
+      <div className="home-row-6 flex flex-row relative m-5">
+        <div className="C8 m-3 rounded-2xl bg-white ">
         </div>
       </div>
     </>
