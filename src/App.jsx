@@ -25,12 +25,12 @@ function App() {
         </div>
       </div> */}
       <div className="home-row-2 flex flex-row relative m-5">
-        <div className="C3 m-3 rounded-2xl bg-white">
+        {/* <div className="C3 m-3 rounded-2xl bg-white">
           <Component3 />
-        </div>
-        <div className="C4 m-3 rounded-2xl bg-white">
+        </div> */}
+        {/* <div className="C4 m-3 rounded-2xl bg-white">
           <Component4 />
-        </div>
+        </div> */}
       </div>
       <div className="home-row-3 flex flex-row relative m-5">
         <div className="C5 m-3 rounded-2xl bg-white">
@@ -52,7 +52,7 @@ function App() {
           
         </div>
       </div>
-      <Carousel/>
+      {/* <Carousel/> */}
 
       <div className="home-row-6 flex flex-row relative m-5">
         <div className="C8 m-3 rounded-2xl bg-white ">

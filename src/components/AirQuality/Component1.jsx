@@ -73,7 +73,7 @@ const Component1 = ({selectedSearch}) => {
     };
   
     const formattedDate = new Date(dateString).toLocaleString('en-US', options);
-  
+    
     return formattedDate;
   };
   
@@ -99,7 +99,7 @@ const Component1 = ({selectedSearch}) => {
             <div className="C1-p1 flex flex-col justify-center gap-1">
             {pollution.map((pol) =>(
                   <p key={pol.id} className="text-slate-500 text-xm">
-                    Last Update: {formatDate(pol.Pol_Date)}
+                    Last Update: {(pol.Pol_Date)}
                   </p>
                  ))}
 

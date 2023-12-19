@@ -1,6 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const Component4 = () => {
+const Component4 = (selectedSearch) => {
+  const [aqiData, setAqiData] = useState(null);
+
+  useEffect(() => {
+    getPollutionData();
+  }, [selectedSearch]);
+
+  const getPollutionData = async () => {
+      try {
+        const selectstation = localStorage.getItem('station');
+        
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/get-MLData/?pol_Station=${selectstation}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        setAqiData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+      }
+    };
+
   return (
     <>
       <div className="C4-container m-8">
@@ -66,58 +92,78 @@ const Component4 = () => {
             </div>
           </div>
         </div>
+        
         <div className="C4-bottom">
           <div className=" bg-[#33a0d3] text-white mt-20 h-9 flex justify-center items-center rounded-2xl">
             <p>Air Quality Forecast</p>
           </div>
-          <div className="part-2 flex mt-3 justify-evenly">
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Wed</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">165</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
+          <div className="flex flex-row justify-evenly items-center">
+          <div className="part-2 flex-col mt-3 justify-evenly">
+            {aqiData &&
+              aqiData.map((day, index) => (
+                <div key={index} className="component flex flex-col justify-center items-center gap-3">
+                  <span>{`Day ${index + 1}`}</span>
+                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 1}`]}</h1>
+                    <span className="text-sm text-slate-500 ">AQI</span>
+                  </div>
+                </div>
+              ))}
+          </div>
+          <div className="part-2 flex-col mt-3 justify-evenly3">
+          {aqiData &&
+              aqiData.map((day, index) => (
+                <div key={index} className="component flex flex-col justify-center items-center gap-3">
+                  <span>{`Day ${index + 2}`}</span>
+                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 2}`]}</h1>
+                    <span className="text-sm text-slate-500 ">AQI</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Thur</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">210</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
+            <div className="part-2 flex-col mt-3 justify-evenly">
+            {aqiData &&
+              aqiData.map((day, index) => (
+                <div key={index} className="component flex flex-col justify-center items-center gap-3">
+                  <span>{`Day ${index + 3}`}</span>
+                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 3}`]}</h1>
+                    <span className="text-sm text-slate-500 ">AQI</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Fri</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">185</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
+            <div className="part-2 flex-col mt-3 justify-evenly">
+            {aqiData &&
+              aqiData.map((day, index) => (
+                <div key={index} className="component flex flex-col justify-center items-center gap-3">
+                  <span>{`Day ${index + 4}`}</span>
+                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 4}`]}</h1>
+                    <span className="text-sm text-slate-500 ">AQI</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Sat</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">165</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
-            </div>
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Sun</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">150</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
-            </div>
-            <div className="component flex flex-col justify-center items-center gap-3">
-              <span className="">Mon</span>
-              <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                <h1 className="text-xl text-[#5e5e5e] font-bold">158</h1>
-                <span className="text-sm text-slate-500 ">AQI</span>
-              </div>
+            <div className="part-2 flex-col mt-3 justify-evenly">
+            {aqiData &&
+              aqiData.map((day, index) => (
+                <div key={index} className="component flex flex-col justify-center items-center gap-3">
+                  <span>{`Day ${index + 5}`}</span>
+                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 5}`]}</h1>
+                    <span className="text-sm text-slate-500 ">AQI</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+            
         </div>
       </div>
     </>
   );
-};
+}
 
 export default Component4;

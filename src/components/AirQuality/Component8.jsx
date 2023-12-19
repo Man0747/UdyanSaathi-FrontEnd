@@ -7,7 +7,7 @@ const [ApiData, setApiData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/get-AqiCalData/?format=api&pol_Station=%22Secretariat%2C+Amaravati+-+APPCB%22");
+        const response = await fetch("http://127.0.0.1:8000/api/get-AqiCalData/");
         const data = await response.json();
         setApiData(data);
         console.log("Response:", response);
@@ -20,11 +20,13 @@ const [ApiData, setApiData] = useState([]);
     fetchData();
   }, []);
   const monthsData = data.reduce((acc, entry) => {
-    const month = entry.Date.split("-")[1];
-    if (!acc[month]) {
-      acc[month] = [];
+    const month = entry.Date?.split("-")[1]; // Use optional chaining to check if Date is defined
+    if (month) {
+      if (!acc[month]) {
+        acc[month] = [];
+      }
+      acc[month].push(entry);
     }
-    acc[month].push(entry);
     return acc;
   }, {});
 
