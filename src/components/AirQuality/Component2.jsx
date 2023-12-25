@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import AnimatedBackground from "../animations/AnimatedBackground";
 
-const Component2 = ({selectedSearch}) => {
+const Component2 = ({ selectedSearch, onData }) => {
+  const [pollutionToChild, setPollutionToChild] = useState("");
   const [state, setState] = useState({
     value: 60, // Default initial value
-    color: 'transparent',
+    color: "transparent",
   });
 
   const [pollution, setPollution] = useState([]);
@@ -16,13 +17,23 @@ const Component2 = ({selectedSearch}) => {
 
   const getPollutionData = async () => {
     try {
-      const apiurl = localStorage.getItem('url');
+      const apiurl = localStorage.getItem("url");
       const response = await fetch(apiurl);
       const data = await response.json();
-      console.log('DATA:', data);
+      console.log("DATA:", data);
       setPollution(data);
 
-      // Set state.value to the AQI value from the first data entry
+      // useEffect(() => {
+      //   // Simulate data fetching or any other asynchronous operation
+      //   const fetchData = async () => {
+      //     const data = pollution;
+      //     onData(data);
+      //   };
+
+      //   fetchData();
+      // }, [onData]);
+      onData(data);
+
       if (data.length > 0) {
         setState((prevState) => ({
           ...prevState,
@@ -30,7 +41,7 @@ const Component2 = ({selectedSearch}) => {
         }));
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -38,17 +49,17 @@ const Component2 = ({selectedSearch}) => {
     let color;
 
     if (value <= 50) {
-      color = '#24c45c';
+      color = "#24c45c";
     } else if (value <= 100) {
-      color = '#ecb40c';
+      color = "#ecb40c";
     } else if (value <= 200) {
-      color = '#fc7414';
+      color = "#fc7414";
     } else if (value <= 300) {
-      color = '#ec4444';
+      color = "#ec4444";
     } else if (value <= 400) {
-      color = '#7c1c1c';
+      color = "#7c1c1c";
     } else {
-      color = '#5c1c84';
+      color = "#5c1c84";
     }
 
     setState((prevState) => ({
@@ -61,20 +72,6 @@ const Component2 = ({selectedSearch}) => {
     setColorForValue(state.value);
   }, [state.value]);
 
-  // const formatDate = (dateString) => {
-  //   const options = {
-  //     year: 'numeric',
-  //     month: 'short',
-  //     day: 'numeric',
-  //     hour: 'numeric',
-  //     minute: 'numeric',
-  //     timeZone: 'UTC',
-  //   };
-
-  //   const formattedDate = new Date(dateString).toLocaleString('en-US', options);
-
-  //   return formattedDate;
-  // };
   return (
     <>
       <div className="C2-container relative rounded-2xl p-9 flex flex-col justify-around h-full">
@@ -82,33 +79,37 @@ const Component2 = ({selectedSearch}) => {
           <AnimatedBackground />
         </div>
         <div className="C2-txt-1 mb-7 flex justify-center ">
-        {pollution.map((pol,) =>(
-              <p key={pol.id} className="text-xl text-[#33a0d3]">Major Air pollutants in {pol.City}</p>
-               ))}
+          {pollution.map((pol) => (
+            <p key={pol.id} className="text-xl text-[#33a0d3]">
+              Major Air pollutants in {pol.City}
+            </p>
+          ))}
         </div>
         <div className="poll-container flex flex-col gap-5">
           <div className="poll-row-1 flex flex-row justify-evenly">
             <div className="ic-1">
-            <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="44"
-                    height="30"
-                    viewBox="0 0 46 34"
-                    fill="none"
-                  >
-                     <image
-            href="/pm2.5-icon.webp"
-            width="36"
-            height="40"
-            x="0"
-            y="0"
-            preserveAspectRatio="none"
-        />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="44"
+                height="30"
+                viewBox="0 0 46 34"
+                fill="none"
+              >
+                <image
+                  href="/pm2.5-icon.webp"
+                  width="36"
+                  height="40"
+                  x="0"
+                  y="0"
+                  preserveAspectRatio="none"
+                />
               </svg>
-              {pollution.map((pol) =>(
-                  <p key={pol.id} className="ic-txt">
-                    {pol.PM25}<span className="ic-span">(PM2.5)</span>
-                  </p>
+              {pollution.map((pol) => (
+                <p key={pol.id} className="ic-txt">
+                  {pol.PM25}
+                  <span className="ic-span">(PM2.5)</span>
+                  {/* {checkPM25Threshold(pol.PM25)} */}
+                </p>
               ))}
             </div>
             <div className="ic-1">
@@ -119,20 +120,22 @@ const Component2 = ({selectedSearch}) => {
                 viewBox="0 0 46 34"
                 fill="none"
               >
-                 <image
-            href="/pm10-icon.webp"
-            width="36"
-            height="40"
-            x="0"
-            y="0"
-            preserveAspectRatio="none"
-        />
-                  </svg>
-                  {pollution.map((pol) =>(
-                  <p key={pol.id}className="ic-txt">
-                    {pol.PM10}<span className="ic-span">(PM10)</span>
-                  </p>
-               ))}
+                <image
+                  href="/pm10-icon.webp"
+                  width="36"
+                  height="40"
+                  x="0"
+                  y="0"
+                  preserveAspectRatio="none"
+                />
+              </svg>
+              {pollution.map((pol) => (
+                <p key={pol.id} className="ic-txt">
+                  {pol.PM10}
+                  <span className="ic-span">(PM10)</span>
+                  {/* {checkPM10Threshold(pol.PM10)} */}
+                </p>
+              ))}
             </div>
             <div className="ic-1">
               <svg
@@ -143,19 +146,21 @@ const Component2 = ({selectedSearch}) => {
                 fill="none"
               >
                 <image
-            href="/so2.webp"
-            width="36"
-            height="40"
-            x="0"
-            y="0"
-            preserveAspectRatio="none"
-        />
-                  </svg>
-                  {pollution.map((pol) =>(
-                  <p key={pol.id}className="ic-txt">
-                    {pol.SO2}<span className="ic-span">(SO2)</span>
-                  </p>
-               ))}
+                  href="/so2.webp"
+                  width="36"
+                  height="40"
+                  x="0"
+                  y="0"
+                  preserveAspectRatio="none"
+                />
+              </svg>
+              {pollution.map((pol) => (
+                <p key={pol.id} className="ic-txt">
+                  {pol.SO2}
+                  <span className="ic-span">(SO2)</span>
+                  {/* {checkSO2Threshold(pol.SO2)} */}
+                </p>
+              ))}
             </div>
           </div>
           <div className="poll-row-2 flex flex-row justify-evenly">
@@ -168,19 +173,21 @@ const Component2 = ({selectedSearch}) => {
                 fill="none"
               >
                 <image
-            href="/CO.webp"
-            width="36"
-            height="40"
-            x="0"
-            y="0"
-            preserveAspectRatio="none"
-        />
-                  </svg>
-                  {pollution.map((pol) =>(
-                  <p key={pol.id}className="ic-txt">
-                    {pol.CO}<span className="ic-span">(CO)</span>
-                  </p>
-               ))}
+                  href="/CO.webp"
+                  width="36"
+                  height="40"
+                  x="0"
+                  y="0"
+                  preserveAspectRatio="none"
+                />
+              </svg>
+              {pollution.map((pol) => (
+                <p key={pol.id} className="ic-txt">
+                  {pol.CO}
+                  <span className="ic-span">(CO)</span>
+                  {/* {checkCOThreshold(pol.CO)} */}
+                </p>
+              ))}
             </div>
             <div className="ic-1">
               <svg
@@ -191,19 +198,21 @@ const Component2 = ({selectedSearch}) => {
                 fill="none"
               >
                 <image
-            href="/o3.webp"
-            width="36"
-            height="40"
-            x="0"
-            y="0"
-            preserveAspectRatio="none"
-        />
-                  </svg>
-                  {pollution.map((pol) =>(
-                  <p key={pol.id} className="ic-txt">
-                    {pol.OZONE}<span className="ic-span">(OZONE)</span>
-                  </p>
-               ))}
+                  href="/o3.webp"
+                  width="36"
+                  height="40"
+                  x="0"
+                  y="0"
+                  preserveAspectRatio="none"
+                />
+              </svg>
+              {pollution.map((pol) => (
+                <p key={pol.id} className="ic-txt">
+                  {pol.OZONE}
+                  <span className="ic-span">(OZONE)</span>
+                  {/* {checkOzoneThreshold(pol.OZONE)} */}
+                </p>
+              ))}
             </div>
             <div className="ic-1">
               <svg
@@ -214,31 +223,24 @@ const Component2 = ({selectedSearch}) => {
                 fill="none"
               >
                 <image
-            href="/no2.webp"
-            width="36"
-            height="40"
-            x="0"
-            y="0"
-            preserveAspectRatio="none"
-        />
-                  </svg>
-                  {pollution.map((pol) =>(
-                  <p key={pol.id}className="ic-txt">
-                    {pol.NO2}<span className="ic-span">(NO2)</span>
-                  </p>
-               ))}
+                  href="/no2.webp"
+                  width="36"
+                  height="40"
+                  x="0"
+                  y="0"
+                  preserveAspectRatio="none"
+                />
+              </svg>
+              {pollution.map((pol) => (
+                <p key={pol.id} className="ic-txt">
+                  {pol.NO2}
+                  <span className="ic-span">(NO2)</span>
+                  {/* {checkNO2Threshold(pol.NO2)} */}
+                </p>
+              ))}
             </div>
           </div>
         </div>
-        {/* <div className="C2-txt-2 flex flex-row gap-2 mt-8 items-center">
-          <div className="rect bg-red-500 p-2 justify-center items-center text-white rounded-xl">
-            <p className="text-xs">PM2.5</p>
-            <p className="text-2xl">17.3X</p>
-          </div>
-          
-        </div> */}
-        {/* <p className='mt-36'>
-          </p> */}
       </div>
     </>
   );

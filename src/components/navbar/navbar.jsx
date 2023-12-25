@@ -1,6 +1,6 @@
 import React, { useState, NavLink,useEffect } from "react";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
 
 function Navbar({onSearchSelected }) {
   var apiUrl = " ";
@@ -173,25 +173,24 @@ function Navbar({onSearchSelected }) {
           }`}>
           <ul className="flex flex-col md:flex-row md:space-x-8">
           <div className="flex space-x-4 text-black items-center">
-            <a
+            <Link
               href="/"
               className="hover:text-slate-600 transition ease-in-out delay-100"
             >
               Air Quality
-            </a>
-            {/* <a
-              href="/water-quality"
-              className="hover:text-slate-600 transition ease-in-out delay-100"
-            >
-              Water Quaity
-            </a>
-            <a
-              href="/stats"
-              className="hover:text-slate-600 transition ease-in-out delay-100"
-            >
-              Blogs
-            </a> */}
-            {/* <Searchbox /> */}
+            </Link>
+            <Link
+                to="/water-quality-index"
+                className="hover:text-slate-600 transition ease-in-out delay-100"
+              >
+                Water Quality
+              </Link>
+              <Link
+                to="/weather"
+                className="hover:text-slate-600 transition ease-in-out delay-100"
+              >
+                Weather
+              </Link>
           </div>
             <div className="relative hidden md:block">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

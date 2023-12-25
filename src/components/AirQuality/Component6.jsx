@@ -14,7 +14,6 @@ const Component6 = () => {
 
   const cityOptions = [
     "Hyderabad",
-    "Greater Noida",
     "Noida",
     "Delhi",
     "Pune",
@@ -23,7 +22,6 @@ const Component6 = () => {
 
   const CompareCityOptions = [
     "Hyderabad",
-    "Greater Noida",
     "Noida",
     "Delhi",
     "Pune",
