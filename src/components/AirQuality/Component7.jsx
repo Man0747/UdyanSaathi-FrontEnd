@@ -1,7 +1,22 @@
-import React from "react";
-import AQIdata from "../../json/Component7-table-data.json";
+import React, { useEffect, useState } from "react";
+// import AQIdata from "../../json/Component7-table-data.json";
 
 const Component7 = () => {
+  const [AQIdata, setAQIdata] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/get-MetroCityData/");
+        const data = await response.json();
+        setAQIdata(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
   const getIconPath = (city) => {
     return `/icons/${city}.svg`;
   };
@@ -54,7 +69,7 @@ const Component7 = () => {
                   <img
                     src={getIconPath(item.City)}
                     alt={`${item.City} icon`}
-                    className="w-5 h-5 mr-2"
+                    className="w-7 h-7 mr-2"
                   />
                   <span>{item.City}</span>
                 </div>
