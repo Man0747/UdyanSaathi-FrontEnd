@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 .box {
   position: relative;
   width: 100%;
