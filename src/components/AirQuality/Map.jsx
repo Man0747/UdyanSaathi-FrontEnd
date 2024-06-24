@@ -1,37 +1,54 @@
-// src/Map.js
-
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import React, { useEffect, useState, useRef } from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import CustomMapMarker from './CustomMapMarker'; 
 import 'leaflet/dist/leaflet.css';
 
 const Map = () => {
     const [data, setData] = useState([]);
-    const [userLocation, setUserLocation] = useState({ lat: '', lng: '' });
+    const [userLocation, setUserLocation] = useState(null);
     const [nearestStation, setNearestStation] = useState(null);
+    const popups = useRef([]);
 
     useEffect(() => {
         fetch('http://127.0.0.1:8000/api/get-MapData/')
             .then(response => response.json())
             .then(data => setData(data))
             .catch(error => console.error('Error fetching AQI data:', error));
+
+        // Get user's location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                    
+                },
+                (error) => {
+                    console.error('Error getting user location:', error);
+                }
+            );
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
     }, []);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setUserLocation({ ...userLocation, [name]: value });
-    };
+    useEffect(() => {
+        if (userLocation && data.length > 0) {
+            findNearestStation(userLocation);
+        }
+    }, [userLocation, data]);
 
-    const handleFindNearest = () => {
-        if (!userLocation.lat || !userLocation.lng) return;
-
-        const userLat = parseFloat(userLocation.lat);
-        const userLng = parseFloat(userLocation.lng);
-
+    const findNearestStation = (location) => {
+        const userLat = parseFloat(location.lat);
+        const userLng = parseFloat(location.lng);
+        console.log("Lat:",userLat);
+        console.log("Lng:",userLng);
         let closestStation = null;
         let minDistance = Infinity;
 
-        data.forEach(station => {
+        data.forEach((station, index) => {
             const distance = Math.sqrt(
                 Math.pow(station.Latitude - userLat, 2) + Math.pow(station.Longitude - userLng, 2)
             );
@@ -42,22 +59,18 @@ const Map = () => {
         });
 
         setNearestStation(closestStation);
+
+        // Find the index of the nearest station in the data array
+        const nearestIndex = data.findIndex(station => station === closestStation);
+
+        // Trigger the popup of the nearest station
+        if (nearestIndex !== -1 && popups.current[nearestIndex]) {
+            popups.current[nearestIndex].openPopup();
+        }
     };
 
     return (
         <div>
-            <div>
-                <label>
-                    Latitude:
-                    <input type="text" name="lat" value={userLocation.lat} onChange={handleInputChange} />
-                </label>
-                <label>
-                    Longitude:
-                    <input type="text" name="lng" value={userLocation.lng} onChange={handleInputChange} />
-                </label>
-                <button onClick={handleFindNearest}>Find Nearest Station</button>
-            </div>
-
             <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: '100vh', width: '100%' }}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -69,7 +82,12 @@ const Map = () => {
                         position={[row.Latitude, row.Longitude]}
                         aqi={row.AQI}
                         station={row.Station}
+                        city={row.City}
+                        polDate={row.Pol_Date}
+                        Latitude={row.Longitude}
+                        Longitude={row.Latitude}
                         highlight={nearestStation && nearestStation.Station === row.Station}
+                        ref={(el) => popups.current[index] = el}
                     />
                 ))}
             </MapContainer>
