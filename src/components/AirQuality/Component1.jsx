@@ -1,8 +1,9 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
-import AnimatedBackground from "../Animations/AnimatedBackground.jsx";
+
 
 import { getUrl } from '../Connectivity/storageHelper';
+// import AnimatedBackground from '../animations/AnimatedBackground';
 
 const Component1 = ({selectedSearch}) => {
   const [state, setState] = useState({
@@ -84,7 +85,7 @@ const Component1 = ({selectedSearch}) => {
     <>
       <div className="relative rounded-2xl h-full">
         <div className="absolute inset-0 rounded-2xl">
-          <AnimatedBackground />
+          {/* <AnimatedBackground /> */}
         </div>
         <div className=" p-12 rounded-2xl relative z-10 flex flex-col gap-9">
           <div className="C1-txt-1 mb-11">

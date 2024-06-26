@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
-import AnimatedBackground from "../animations/AnimatedBackground";
+// import AnimatedBackground from "../animations/AnimatedBackground";
 import { getUrl } from "../Connectivity/storageHelper";
 
 const Component2 = ({ selectedSearch, onData }) => {
@@ -77,7 +77,7 @@ const Component2 = ({ selectedSearch, onData }) => {
     <>
       <div className="C2-container relative rounded-2xl p-9 flex flex-col justify-around h-full">
         <div className="absolute inset-0 rounded-2xl">
-          <AnimatedBackground />
+          {/* <AnimatedBackground /> */}
         </div>
         <div className="C2-txt-1 mb-7 flex justify-center ">
           {pollution.map((pol) => (

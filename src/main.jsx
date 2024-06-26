@@ -3,16 +3,16 @@ import ReactDOM from "react-dom/client";
 import AirQualityPage from "./pages/AirQualityPage";
 import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import WaterQualiity from "./pages/WaterQualiity.jsx";
-import WeatherMoniter from "./pages/WeatherMoniter.jsx";
+import WaterQuality from "./pages/WaterQuality.jsx"; // Corrected typo
+import WeatherMonitor from "./pages/WeatherMonitor.jsx"; // Corrected typo
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AirQualityPage />} />
-        <Route path="/water-quality-index" element={<WaterQualiity />} />
-        <Route path="/weather" element={<WeatherMoniter />} />
+        <Route path="/water-quality-index" element={<WaterQuality />} />
+        <Route path="/weather" element={<WeatherMonitor />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
