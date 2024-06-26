@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getBaseUrl } from "../Connectivity/storageHelper";
 
 const Component4 = (selectedSearch) => {
   const [aqiData, setAqiData] = useState(null);
@@ -9,10 +10,10 @@ const Component4 = (selectedSearch) => {
 
   const getPollutionData = async () => {
       try {
-        const selectstation = localStorage.getItem('station');
-        
+        const selectstation = getStationName();
+        const baseurl = getBaseUrl();
         const response = await fetch(
-          `http://127.0.0.1:8000/api/get-MLData/?pol_Station=${selectstation}`
+          `${baseurl}get-MLData/?pol_Station=${selectstation}`
         );
 
         if (!response.ok) {

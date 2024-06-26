@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getBaseUrl } from "../Connectivity/storageHelper";
 
 const Component3 = () => {
   const [citiesData, setCitiesData] = useState([]);
@@ -32,14 +33,15 @@ const Component3 = () => {
     } else if (interval === "last-month") {
       from_date.setDate(today.getDate() - 30);
     }
-
+   
     const to_date = today.toISOString().slice(0, 10);
     return { from_date: from_date.toISOString().slice(0, 10), to_date };
   };
 
   const fetchAirQualityData = async (from_date, to_date) => {
     try {
-      const url = `http://127.0.0.1:8000/api/get-Top10Cities/?from_date=${from_date}&to_date=${to_date}&parameter=${selectedParameter}`;
+      const baseurl = getBaseUrl();
+      const url = `${baseurl}get-Top10Cities/?from_date=${from_date}&to_date=${to_date}&parameter=${selectedParameter}`;
       const response = await fetch(url);
 
       if (!response.ok) {

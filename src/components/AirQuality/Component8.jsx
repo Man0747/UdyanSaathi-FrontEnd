@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from "react";
-import data from "../../json/data.json";
+import { getBaseUrl, getStationName } from "../Connectivity/storageHelper";
 
-const Component8 = () => {
-const [ApiData, setApiData] = useState([]);
+
+const Component8 = (selectedSearch) => {
+  const [apiData, setApiData] = useState([]);
+  const [selectedYear, setSelectedYear] = useState("2024");
+
 
   useEffect(() => {
-    const fetchData = async () => {
+    getAqiCalData();
+  }, [selectedSearch]);
+
+
+    const getAqiCalData = async () => {
+      const selectstation = getStationName();
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/get-AqiCalData/");
+        const baseurl = getBaseUrl();
+        console.log(baseurl);
+        const response = await fetch(`${baseurl}get-AqiCalData/?pol_Station=${selectstation}`);
         const data = await response.json();
         setApiData(data);
         console.log("Response:", response);
@@ -17,10 +27,16 @@ const [ApiData, setApiData] = useState([]);
       }
     };
 
-    fetchData();
-  }, []);
-  const monthsData = data.reduce((acc, entry) => {
-    const month = entry.Date?.split("-")[1]; // Use optional chaining to check if Date is defined
+  const handleYearChange = (e) => {
+    setSelectedYear(e.target.value);
+  };
+
+  const filteredData = apiData.filter(entry => 
+    selectedYear ? entry.Pol_Date?.startsWith(selectedYear) : false
+  );
+
+  const monthsData = filteredData.reduce((acc, entry) => {
+    const month = entry.Pol_Date?.split("-")[1];
     if (month) {
       if (!acc[month]) {
         acc[month] = [];
@@ -31,41 +47,26 @@ const [ApiData, setApiData] = useState([]);
   }, {});
 
   const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];
 
   const getColorBasedOnAQI = (aqi) => {
-    if (aqi <= 50) {
-      return "#34a12b"; // green
-    } else if (aqi <= 100) {
-      return "#ecc93d"; // yellow
-    } else if (aqi <= 200) {
-      return "#e9572a"; // orange
-    } else if (aqi <= 300) {
-      return "#ec4d9f"; // pink
-    } else if (aqi <= 400) {
-      return "#9858a2"; // purple
-    } else {
-      return "#c11e2f"; // red
-    }
+    if (aqi <= 50) return "#34a12b";
+    if (aqi <= 100) return "#ecc93d";
+    if (aqi <= 200) return "#e9572a";
+    if (aqi <= 300) return "#ec4d9f";
+    if (aqi <= 400) return "#9858a2";
+    return "#c11e2f";
   };
+
+  const uniqueYears = [...new Set(apiData.map(entry => entry.Pol_Date?.split("-")[0]))].sort();
 
   return (
     <div className="cal-container m-8">
       <div className="cal-txt flex flex-row items-center justify-between">
         <h1 className="text-2xl text-black font-bold text-start mb-2 align-middle">
-          AQI Calender
+          AQI Calendar
         </h1>
         <div className="markings flex flex-row">
           <div className="w-24 h-7 bg-[#34a12b] flex justify-center items-center">
@@ -88,25 +89,40 @@ const [ApiData, setApiData] = useState([]);
           </div>
         </div>
       </div>
-      <div className="cal mt-5 flex flex-row gap-2">
-        {Object.entries(monthsData).map(([month, dates], index) => (
-          <div key={index} className="box1">
-            <div className="txt-head">
-              <p className="heading">{monthNames[parseInt(month, 10) - 1]}</p>
-            </div>
-            <div className="innerbox-container">
-              {dates.map((date, innerIndex) => (
-                <div
-                  key={innerIndex}
-                  className="innerbx1"
-                  style={{ backgroundColor: getColorBasedOnAQI(date.AQI) }}
-                  title={`Date: ${date.Date} AQI: ${date.AQI}`}
-                ></div>
-              ))}
-            </div>
-          </div>
-        ))}
+      <div className="flex flex-row gap-2">
+        <label className="text-lg font-semibold">Select Year: </label>
+        <select value={selectedYear} onChange={handleYearChange} className="border p-2">
+          {/* <option value="" disabled>Select Year</option> */}
+          {uniqueYears.map((year, index) => (
+            <option key={index} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
       </div>
+      {selectedYear && (
+        <div className="cal mt-5 flex flex-row gap-2">
+          {Object.entries(monthsData)
+            .sort((a, b) => a[0] - b[0])
+            .map(([month, dates], index) => (
+              <div key={index} className="box1">
+                <div className="txt-head">
+                  <p className="heading">{monthNames[parseInt(month, 10) - 1]}</p>
+                </div>
+                <div className="innerbox-container">
+                  {dates.map((date, innerIndex) => (
+                    <div
+                      key={innerIndex}
+                      className="innerbx1"
+                      style={{ backgroundColor: getColorBasedOnAQI(date.AQI) }}
+                      title={`Date: ${date.Pol_Date} AQI: ${date.AQI}`}
+                    ></div>
+                  ))}
+                </div>
+              </div>
+            ))}
+        </div>
+      )}
     </div>
   );
 };

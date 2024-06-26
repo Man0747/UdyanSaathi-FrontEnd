@@ -1,6 +1,7 @@
 import React, { useState, NavLink,useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { getBaseUrl, setStationName, setUrl } from "../Connectivity/storageHelper";
 
 function Navbar({onSearchSelected }) {
   var apiUrl = " ";
@@ -35,7 +36,8 @@ function Navbar({onSearchSelected }) {
   useEffect(() => {
     // Make an API call to fetch the data when searchTerm changes
     if (searchTerm.length >= 3) {
-      fetch(`http://127.0.0.1:8000/api/get-stations/?pol_Station=${searchTerm}&pol_Date=${formattedDateTime}`)
+      const baseUrl = getBaseUrl()
+      fetch(`${baseUrl}get-stations/?pol_Station=${searchTerm}&pol_Date=${formattedDateTime}`)
         .then(response => response.json())
         .then(data => {
           setDefaultSuggestions(data.map(station => station.Station));
@@ -115,7 +117,7 @@ function Navbar({onSearchSelected }) {
     
     console.log(formattedDateTime);    
 
-    const baseUrl = 'http://127.0.0.1:8000/api/';
+    const baseUrl = getBaseUrl();
     const endpoint = 'get-pollution-by-date-station/';
     const queryParams = {
     pol_Date: formattedDateTime,
@@ -123,8 +125,8 @@ function Navbar({onSearchSelected }) {
     };
 
     apiUrl = `${baseUrl}${endpoint}?${new URLSearchParams(queryParams)}`;
-    localStorage.setItem('url', apiUrl);
-    localStorage.setItem('station', selectedSuggestion);
+    setUrl(apiUrl);
+    setStationName(selectedSuggestion);
     console.log(`Performing a search with the selected suggestion: ${apiUrl}`);
   };
   

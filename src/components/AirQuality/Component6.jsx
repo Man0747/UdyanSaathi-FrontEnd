@@ -1,111 +1,116 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import DN from "../../json/GN.json";
-import * as d3TimeFormat from "d3-time-format";
+import Select from "react-select";
+import { getBaseUrl } from "../Connectivity/storageHelper";
 
 const Component6 = () => {
   const chartRef = useRef(null);
   const tooltipRef = useRef(null);
-  const [selectedOption, setSelectedOption] = useState("CO");
+  const [selectedOption, setSelectedOption] = useState("AQI");
   const options = ["CO", "NO2", "OZONE", "SO2", "AQI", "PM10", "NH3"];
-  const [city, setCity] = useState("");
-  const [compareCity, setCompareCity] = useState("");
+  const [city, setCity] = useState(null);
+  const [compareCity, setCompareCity] = useState(null);
   const [selectedTimeRange, setSelectedTimeRange] = useState("last-7-days");
 
-  const cityOptions = [
-    "Hyderabad",
-    "Noida",
-    "Delhi",
-    "Pune",
-    "Mumbai",
-  ];
-
-  const CompareCityOptions = [
-    "Hyderabad",
-    "Noida",
-    "Delhi",
-    "Pune",
-    "Mumbai",
-  ];
+  const [cityOptions, setCityOptions] = useState([]);
+  const [compareCityOptions, setCompareCityOptions] = useState([]);
 
   const filterOptions = ["last-7-days", "last-15-days", "last-30-days"];
 
-  const [rawdata, setRawdata] = useState(DN);
-  const [compareRawData, setCompareRawData] = useState(DN); // Added state for the second city
+  const [rawdata, setRawdata] = useState([]);
+  const [compareRawdata, setCompareRawdata] = useState([]);
+  
 
-  const handleChange = (event) => {
-    setSelectedOption(event.target.value);
+  const fetchCityOptions = async () => {
+    try {
+      const baseurl = getBaseUrl();
+      const response = await fetch(`${baseurl}get-allStations`);
+      const data = await response.json();
+      const cities = data.map((item) => ({
+        label: item.Station,
+        value: item.Station,
+      }));
+      setCityOptions(cities);
+      setCompareCityOptions(cities);
+    } catch (error) {
+      console.error("Error fetching city options:", error);
+    }
   };
-
-  const handleCompareCityChange = (event) => {
-    setCompareCity(event.target.value);
-  };
-
-  const handleCityChange = (event) => {
-    setCity(event.target.value);
-  };
-
-  const handleTimeRangeChange = (event) => {
-    setSelectedTimeRange(event.target.value);
-  };
-
-  const filteredData = rawdata
-    .filter((entry) => entry.City === city)
-    .filter((entry) => {
-      const currentDate = new Date(entry.Pol_Date);
-      const endDate = new Date(); // Current date
-      const startDate = new Date(endDate);
-
-      // Set the start date based on the selected time range
-      if (selectedTimeRange === "last-7-days") {
-        startDate.setDate(endDate.getDate() - 7);
-      } else if (selectedTimeRange === "last-15-days") {
-        startDate.setDate(endDate.getDate() - 15);
-      } else if (selectedTimeRange === "last-30-days") {
-        startDate.setDate(endDate.getDate() - 30);
-      }
-
-      return currentDate >= startDate && currentDate <= endDate;
-    })
-    .map((entry) => {
-      const chemicalValue = entry[selectedOption];
-      return {
-        date: new Date(entry.Pol_Date),
-        value: chemicalValue,
-        aqi: entry.AQI,
-      };
-    });
-
-  const filteredCompareData = compareRawData
-    .filter((entry) => entry.City === compareCity)
-    .filter((entry) => {
-      const currentDate = new Date(entry.Pol_Date);
-      const endDate = new Date(); // Current date
-      const startDate = new Date(endDate);
-
-      // Set the start date based on the selected time range
-      if (selectedTimeRange === "last-7-days") {
-        startDate.setDate(endDate.getDate() - 7);
-      } else if (selectedTimeRange === "last-15-days") {
-        startDate.setDate(endDate.getDate() - 15);
-      } else if (selectedTimeRange === "last-30-days") {
-        startDate.setDate(endDate.getDate() - 30);
-      }
-
-      return currentDate >= startDate && currentDate <= endDate;
-    })
-    .map((entry) => {
-      const chemicalValue = entry[selectedOption];
-      return {
-        date: new Date(entry.Pol_Date),
-        value: chemicalValue,
-        aqi: entry.AQI,
-      };
-    });
-
-  console.log(filteredData);
 
   useEffect(() => {
+    fetchCityOptions();
+  }, []);
+
+  const fetchData = async () => {
+    if (!city) return; // Do not fetch if city is not selected
+
+    const toDate =
+      selectedTimeRange === "last-7-days"
+        ? 6
+        : selectedTimeRange === "last-15-days"
+        ? 14
+        : selectedTimeRange === "last-30-days"
+        ? 29
+        : 6;
+    const baseurl = getBaseUrl();
+    const apiUrl = `${baseurl}get-GraphData/?pol_Station=${
+      city.value
+    }&to_date=${toDate}`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      setRawdata(data); // Assuming data structure matches your provided JSON
+    } catch (error) {
+      console.error("Error fetching graph data:", error);
+    }
+
+    if (compareCity) {
+      const baseurl = getBaseUrl();
+      const compareApiUrl = `${baseurl}get-GraphData/?pol_Station=${
+        compareCity.value
+      }&to_date=${toDate}`;
+
+      try {
+        const response = await fetch(compareApiUrl);
+        const data = await response.json();
+        setCompareRawdata(data); // Assuming data structure matches your provided JSON
+      } catch (error) {
+        console.error("Error fetching compare graph data:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [city, compareCity, selectedOption, selectedTimeRange]);
+
+  const [bestValue, setBestValue] = useState(null);
+  const [worstValue, setWorstValue] = useState(null);
+//   const [bestValueCompareCity, setBestValueCompareCity] = useState(null);
+//   const [worstValueCompareCity, setWorstValueCompareCity] = useState(null);
+  
+  useEffect(() => {
+    if (!rawdata.length ||!compareRawdata.length ||!selectedOption) return;
+  
+    const allData = [...rawdata,...compareRawdata];
+  
+    const bestData = allData.reduce((acc, current) => {
+      return acc[selectedOption] < current[selectedOption]? acc : current;
+    });
+  
+    const worstData = allData.reduce((acc, current) => {
+      return acc[selectedOption] > current[selectedOption]? acc : current;
+    });
+  
+    setBestValue(`${bestData[selectedOption]} (${bestData.City}, ${bestData.Pol_Date})`);
+    setWorstValue(`${worstData[selectedOption]} (${worstData.City}, ${worstData.Pol_Date})`);
+  }, [rawdata, compareRawdata, selectedOption]);
+
+  useEffect(() => {
+    // D3 rendering logic
+    if (!rawdata.length || !compareRawdata.length) return; // Do not render if data is not available
+
     const svg = d3.select(chartRef.current);
     const margin = { top: 20, right: 50, bottom: 60, left: 70 };
     const width = 940 - margin.left - margin.right;
@@ -115,259 +120,296 @@ const Component6 = () => {
 
     const x = d3
       .scaleTime()
-      .domain(
-        d3.extent([...filteredData, ...filteredCompareData], (d) => d.date)
-      )
+      .domain(d3.extent(rawdata, (d) => new Date(d.Pol_Date)))
       .range([0, width]);
 
     const y = d3
       .scaleLinear()
       .domain([
         0,
-        d3.max([...filteredData, ...filteredCompareData], (d) => d.value),
+        d3.max([
+          d3.max(rawdata, (d) => d[selectedOption]),
+          d3.max(compareRawdata, (d) => d[selectedOption]),
+        ]),
       ])
+      .nice()
       .range([height, 0]);
 
     const line = d3
       .line()
-      .x((d) => x(d.date))
-      .y((d) => y(d.value))
+      .x((d) => x(new Date(d.Pol_Date)))
+      .y((d) => y(d[selectedOption]))
       .curve(d3.curveCardinal);
 
     const area = d3
       .area()
-      .x((d) => x(d.date))
+      .x((d) => x(new Date(d.Pol_Date)))
       .y0(height)
-      .y1((d) => y(d.value))
+      .y1((d) => y(d[selectedOption]))
       .curve(d3.curveCardinal);
 
     svg.attr("width", width + margin.left + margin.right);
     svg.attr("height", height + margin.top + margin.bottom);
 
     const g = svg
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    // Update y-axis domain based on the extent of the combined filtered data
-    y.domain([
-      0,
-      d3.max([...filteredData, ...filteredCompareData], (d) => d.value),
-    ]);
+.append("g")
+     .attr("transform", `translate(${margin.left},${margin.top})`);
 
     g.append("g")
-      .call(d3.axisLeft(y))
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -50)
-      .attr("x", -height / 2)
-      .attr("dy", "1em")
-      .attr("fill", "#000")
-      .attr("text-anchor", "middle")
-      .text(selectedOption);
+     .call(d3.axisLeft(y))
+     .append("text")
+     .attr("transform", "rotate(-90)")
+     .attr("y", -50)
+     .attr("x", -height / 2)
+     .attr("dy", "1em")
+     .attr("fill", "#000")
+     .attr("text-anchor", "middle")
+     .text(selectedOption);
 
     g.append("g")
-      .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x))
-      .append("text")
-      .attr("x", width / 2)
-      .attr("y", 40)
-      .attr("fill", "#000")
-      .attr("text-anchor", "middle")
-      .text("Date");
+     .attr("transform", `translate(0,${height})`)
+     .call(d3.axisBottom(x).ticks(7))
+     .append("text")
+     .attr("x", width / 2)
+     .attr("y", 40)
+     .attr("fill", "#000")
+     .attr("text-anchor", "middle")
+     .text("Date");
 
-    // Render line and area for the second city (Blue Graph)
+    // Render area chart for city data
     g.append("path")
-      .datum(filteredCompareData)
+     .datum(rawdata)
+     .attr("fill", "#FFB6C1") // Lighter pink for city data
+     .attr("opacity", 0.6)
+     .attr("d", area);
 
-      .attr("fill", "blue")
-      .attr("opacity", 0.3)
-      .attr("d", area);
-
+    // Render line chart for city data
     g.append("path")
-      .datum(filteredCompareData)
-      .attr("fill", "none") // Set fill to none for the line
-      .attr("stroke", "blue") // Change color for the second city
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-linecap", "round")
-      .attr("stroke-width", 1.5)
-      .attr("d", line);
+     .datum(rawdata)
+     .attr("fill", "none")
+     .attr("stroke", "#FF69B4") // Pink for city data
+     .attr("stroke-linejoin", "round")
+     .attr("stroke-linecap", "round")
+     .attr("stroke-width", 2)
+     .attr("d", line);
 
+    // Render area chart for compare city data
     g.append("path")
-      .datum(filteredData)
-      .attr("fill", "#FF69B4")
-      .attr("opacity", 0.3)
-      .attr("d", area);
+     .datum(compareRawdata)
+     .attr("fill", "#ADD8E6") // Lighter blue for compare city data
+     .attr("opacity", 0.6)
+     .attr("d", area);
 
-    // Render line for the first city (Red Graph)
+    // Render line chart for compare city data
     g.append("path")
-      .datum(filteredData)
-      .attr("fill", "none") // Set fill to none for the line
-      .attr("stroke", "red")
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-linecap", "round")
-      .attr("stroke-width", 1.5)
-      .attr("d", line);
+     .datum(compareRawdata)
+     .attr("fill", "none")
+     .attr("stroke", "#4682B4") // Blue for compare city data
+     .attr("stroke-linejoin", "round")
+     .attr("stroke-linecap", "round")
+     .attr("stroke-width", 2)
+     .attr("d", line);
 
     const tooltip = d3.select(tooltipRef.current);
 
+    // Render dots for city data
     g.selectAll(".dot")
-      .data([...filteredData, ...filteredCompareData])
-      .enter()
-      .append("circle")
-      .attr("class", "dot")
-      .attr("cx", (d) => x(d.date))
-      .attr("cy", (d) => y(d.value))
-      .attr("r", 5)
-      .attr("fill", (d) => (filteredData.includes(d) ? "red" : "blue")) // Change color based on city
-      .on("mouseover", function (event, d) {
+     .data(rawdata)
+     .enter()
+     .append("circle")
+     .attr("class", "dot")
+     .attr("cx", (d) => x(new Date(d.Pol_Date)))
+     .attr("cy", (d) => y(d[selectedOption]))
+     .attr("r", 5)
+     .attr("fill", "#FF69B4")
+     .on("mouseover", function (event, d) {
         const { clientX, clientY } = event;
 
-        const tooltipContent = `${selectedOption}: ${
-          d.value
-        }<br>Date: ${d.date.toLocaleDateString()}`;
+        const tooltipContent = `${selectedOption}: ${d[selectedOption]}<br>Date: ${
+          d.Pol_Date
+        }<br>City: ${city.label}`;
 
         d3.select(this).attr("r", 8);
 
         tooltip
-          .style("display", "block")
-          .html(tooltipContent)
-          .style("left", clientX + 20 + "px")
-          .style("top", clientY + 20 + "px");
+         .style("display", "block")
+         .html(tooltipContent)
+         .style("left", clientX + 10 + "px")
+         .style("top", clientY + -100 + "px");
       })
-
-      .on("mouseout", function () {
+     .on("mouseout", function () {
         d3.select(this).attr("r", 5);
 
         tooltip.style("display", "none");
       });
-  }, [
-    filteredData,
-    selectedOption,
-    compareRawData,
-    compareCity,
-    selectedTimeRange,
-  ]);
+
+    // Render dots for compare city data
+    g.selectAll(".compare-dot")
+     .data(compareRawdata)
+     .enter()
+     .append("circle")
+     .attr("class", "compare-dot")
+     .attr("cx", (d) => x(new Date(d.Pol_Date)))
+     .attr("cy", (d) => y(d[selectedOption]))
+     .attr("r", 5)
+     .attr("fill", "#4682B4")
+     .on("mouseover", function (event, d) {
+        const { clientX, clientY } = event;
+
+        const tooltipContent = `${selectedOption}: ${d[selectedOption]}<br>Date: ${
+          d.Pol_Date
+        }<br>City: ${city.label}`;
+
+        d3.select(this).attr("r", 8);
+
+        tooltip
+         .style("display", "block")
+         .html(tooltipContent)
+         .style("left", clientX + 10 + "px")
+         .style("top", clientY + -100  + "px");
+      })
+     .on("mouseout", function () {
+        d3.select(this).attr("r", 5);
+
+        tooltip.style("display", "none");
+      });
+
+    // Legend or text for cityrepresentation
+    const legend = svg
+    .append("g")
+    .attr("transform", `translate(${width - 100}, ${margin.top})`);
+
+    legend
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("fill", "#FF69B4"); // Pink
+
+    legend
+    .append("text")
+    .attr("x", 15)
+    .attr("y", 10)
+    .text(city? city.label : "City")
+    .attr("alignment-baseline", "middle");
+
+    legend
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", 20)
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("fill", "#4682B4"); // Blue
+
+    legend
+    .append("text")
+    .attr("x", 15)
+    .attr("y", 30)
+    .text(compareCity? compareCity.label : "Compare City")
+    .attr("alignment-baseline", "middle");
+  }, [rawdata, compareRawdata, selectedOption, city, compareCity]);
+
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const handleCompareCityChange = (selectedOption) => {
+    setCompareCity(selectedOption);
+  };
+
+  const handleCityChange = (selectedOption) => {
+    setCity(selectedOption);
+  };
+
+  const handleTimeRangeChange = (event) => {
+    setSelectedTimeRange(event.target.value);
+  };
 
   return (
-    <>
-      <div className="C6-container m-8 flex flex-col">
-        <div className="C6-top flex flex-row justify-between">
-          <div className="C6-txt flex flex-col">
-            <h1 className="C6-heading text-2xl text-[#33a0d3]">
-              Historic Air quality Data{" "}
-            </h1>
-            <span className="text-sm text-slate-500 mt-5">
-              Explore the insightful air pollution data for last
-            </span>
-            <span className="text-sm text-slate-500">
-              24 hours, 7days and 1 month
-            </span>
-          </div>
-          <div className="flex flex-row gap-4">
-            <div className="best p-3 bg-[#43a53d] text-white w-32 h-14 rounded-xl flex flex-row justify-between items-center">
-              <span className="text-xs">
-                Best <br /> AQI
-              </span>
-              <h3 className="text-lg">354</h3>
+    <div class="C6-container mx-4 my-4 flex flex-col">
+    <div class="C6-top flex flex-col lg:flex-row lg:justify-between">
+        <div class="C6-txt">
+            <h1 class="C6-heading text-2xl text-[#33a0d3]">Historic Air Quality Data</h1>
+            <div class="mt-2 text-xs text-slate-500">
+                <span>Explore insightful air pollution data for:</span>
+                <ul class="list-disc mt-1 ml-4">
+                    <li>Last 24 hours</li>
+                    <li>Last 7 days</li>
+                    <li>Last 1 month</li>
+                </ul>
             </div>
-            <div className="worst p-3 bg-[#c22c3d] text-white w-32 h-14 rounded-xl flex flex-row justify-between items-center">
-              <span className="text-xs">
-                Worst <br /> AQI
-              </span>
-              <h3 className="text-lg">784</h3>
-            </div>
-          </div>
         </div>
-        <div className="C6-graph">
-          <div className="flex flex-row items-center mb-5 ">
-            <select
-              className="border border-gray-300 p-2 rounded-md mt-3"
-              onChange={handleChange}
-              value={selectedOption}
-            >
-              {options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <select
-              className="border border-gray-300 p-2 rounded-md mt-3 ml-3"
-              onChange={handleCityChange}
-              value={city}
-            >
-              <option value="" disabled>
-                Select City
-              </option>
-              {cityOptions.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-            <span className="p-2 mt-3 text-xs text-slate-500">
-              Compare With -
-            </span>
-            <select
-              className="border border-gray-300 p-2 rounded-md mt-3 ml-3"
-              onChange={handleCompareCityChange}
-              value={compareCity}
-            >
-              <option value="" disabled>
-                {" "}
-                Select City
-              </option>
-              {CompareCityOptions.map((compareCity) => (
-                <option key={compareCity} value={compareCity}>
-                  {compareCity}
-                </option>
-              ))}
-            </select>
-            <select
-              className="border border-gray-300 p-2 rounded-md mt-3 ml-3"
-              onChange={handleTimeRangeChange}
-              value={selectedTimeRange}
-            >
-              <option value="last-7-days">Last 7 days</option>
-              <option value="last-15-days">Last 15 days</option>
-              <option value="last-30-days">Last 30 days</option>
-            </select>
-          </div>
-          <svg ref={chartRef}></svg>
-          <div
-            ref={tooltipRef}
-            style={{
-              position: "fixed",
-              display: "none",
-              borderStyle: "solid",
-              whiteSpace: "nowrap",
-              zIndex: 9999999,
-              transition:
-                "left 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s, top 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s",
-              backgroundColor: "rgb(255, 255, 255)",
-              borderWidth: "1px",
-              borderColor: "rgb(247, 249, 252)",
-              color: "rgb(26, 33, 56)",
-              font: "20px / 30px 'Microsoft YaHei'",
-              borderRadius: "10px",
-              padding: "8px 24px",
-              pointerEvents: "none",
-              boxShadow: " 1px 1px 3px 2px #ccc",
-            }}
-          ></div>
-          <div className="graph-index flex flex-row gap-3 justify-end">
-            <div className="red flex flex-row items-center gap-1">
-              <div className="bg-red-500 p-1"></div>
-              <span className="text-xs">{city}</span>
+        <div class="flex flex-col lg:flex-row gap-2 mt-2 lg:mt-0">
+            <div class="best bg-green-500 text-white rounded-lg p-1 flex justify-center items-center">
+                <span class="text-xs text-center">Best<br />{selectedOption}</span>
+                <h3 class="text-sm">{bestValue}</h3>
             </div>
-            <div className="blue flex flex-row items-center gap-1">
-              <div className="p-1 bg-blue-500"></div>
-              <span className="text-xs">{compareCity}</span>
+            <div class="worst bg-red-500 text-white rounded-lg p-1 mt-2 lg:mt-0 flex justify-center items-center">
+                <span class="text-xs text-center">Worst<br />{selectedOption}</span>
+                <h3 class="text-sm">{worstValue}</h3>
             </div>
-          </div>
         </div>
+    </div>
+
+
+      <div className="C6-graph">
+        <div className="flex flex-row items-center mb-5">
+          <select
+            className="border border-gray-300 p-2 rounded-md mt-3"
+            onChange={handleChange}
+            value={selectedOption}
+          >
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+
+          <Select
+            className="border border-gray-300 p-2 rounded-md mt-3 ml-3"
+            options={cityOptions}
+            value={city}
+            onChange={handleCityChange}
+            isClearable
+          />
+
+          <Select
+            className="border border-gray-300 p-2 rounded-md mt-3 ml-3"
+            options={compareCityOptions}
+            value={compareCity}
+            onChange={handleCompareCityChange}
+            isClearable
+          />
+
+          <select
+            className="border border-gray-300 p-2 rounded-md mt-3 ml-3"
+            value={selectedTimeRange}
+            onChange={handleTimeRangeChange}
+          >
+            {filterOptions.map((filterOption) => (
+              <option key={filterOption} value={filterOption}>
+                {filterOption}
+              </option>
+            ))}
+          </select>
+        </div>
+        <svg ref={chartRef}></svg>
+        <div
+          className="tooltip"
+          ref={tooltipRef}
+          style={{
+            position: "absolute",
+            backgroundColor: "white",
+            border: "1px solid #ddd",
+            padding: "5px",
+            borderRadius: "5px",
+            display: "none",
+          }}
+        ></div>
       </div>
-    </>
+    </div>
   );
 };
 

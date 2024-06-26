@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import CustomMapMarker from './CustomMapMarker'; 
 import 'leaflet/dist/leaflet.css';
+import { getBaseUrl } from '../Connectivity/storageHelper';
 
 const Map = () => {
     const [data, setData] = useState([]);
@@ -10,7 +11,8 @@ const Map = () => {
     const popups = useRef([]);
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/get-MapData/')
+        const baseurl = getBaseUrl();
+        fetch(`${baseurl}get-MapData/`)
             .then(response => response.json())
             .then(data => setData(data))
             .catch(error => console.error('Error fetching AQI data:', error));

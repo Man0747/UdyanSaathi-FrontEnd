@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getBaseUrl } from "../Connectivity/storageHelper";
 
 const Component5 = () => {
   const [citiesData, setCitiesData] = useState([]);
@@ -39,7 +40,8 @@ const Component5 = () => {
 
   const fetchAirQualityData = async (from_date, to_date) => {
     try {
-      const url = `http://127.0.0.1:8000/api/get-Top10LeastPollutedCities/?from_date=${from_date}&to_date=${to_date}&parameter=${selectedParameter}`;
+      const baseurl = getBaseUrl();
+      const url = `${baseurl}get-Top10LeastPollutedCities/?from_date=${from_date}&to_date=${to_date}&parameter=${selectedParameter}`;
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -57,7 +59,7 @@ const Component5 = () => {
 
   return (
     <>
-      <div className="C3-container flex flex-col gap-3 m-8 rounded-2xl">
+      <div className="C3-container flex flex-col gap-3 m-6 rounded-2xl">
         <div className="C3-txt">
           <div className="C3-heading flex flex-row items-center gap-2">
             <h3 className="text-xl text-[#33a0d3]">

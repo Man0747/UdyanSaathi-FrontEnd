@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
 import AnimatedBackground from "../Animations/AnimatedBackground";
+import { getUrl } from '../Connectivity/storageHelper';
 
 const Component1 = ({selectedSearch}) => {
   const [state, setState] = useState({
@@ -16,7 +17,7 @@ const Component1 = ({selectedSearch}) => {
 
   const getPollutionData = async () => {
     try {
-      const apiurl = localStorage.getItem('url');
+      const apiurl = getUrl();
       const response = await fetch(apiurl);
       const data = await response.json();
       console.log('DATA:', data);
