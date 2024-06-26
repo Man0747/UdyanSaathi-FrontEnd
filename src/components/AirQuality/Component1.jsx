@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
-import AnimatedBackground from "../Animations/AnimatedBackground";
+import AnimatedBackground from "../Animations/AnimatedBackground.jsx";
+
 import { getUrl } from '../Connectivity/storageHelper';
 
 const Component1 = ({selectedSearch}) => {
