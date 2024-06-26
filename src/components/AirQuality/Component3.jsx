@@ -1,27 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getBaseUrl } from "../Connectivity/storageHelper";
 
 const Component3 = () => {
-  const [selectedOption, setSelectedOption] = useState("Real Time");
-  const [AqiSelect, setAqiSelect] = useState("AQI");
+  const [citiesData, setCitiesData] = useState([]);
+  const [selectedOption, setSelectedOption] = useState("last-day");
+  const [selectedParameter, setSelectedParameter] = useState("AQI");
+  const [error, setError] = useState(null);
+  const options = ["last-day", "last-7-days", "last-month"];
+  const AqiOptions = ["CO", "NH3", "NO2", "OZONE", "PM25", "PM10", "SO2", "AQI"];
 
-  const citiesData = [
-    { name: "Pune", aqi: 150 },
-    { name: "Hyderabad", aqi: 180 },
-    { name: "Noida", aqi: 200 },
-    { name: "Delhi", aqi: 160 },
-    { name: "Chennai", aqi: 190 },
-    { name: "Greater Noida", aqi: 200 },
-  ];
-  const options = ["Real Time", "Last 7 Days", "Last Day", "Last Month"];
+  useEffect(() => {
+    // Calculate the from_date and to_date based on the selected time interval
+    const { from_date, to_date } = getDateRange(selectedOption);
+    
+    // Fetch air quality data using the parameterized URL
+    fetchAirQualityData(from_date, to_date);
+  }, [selectedOption, selectedParameter]);
 
-  const AqiOptions = ["CO", "CO2", "NO2", "OZONE", "SO2", "AQI", "PM10", "NH3"];
+  const getDateRange = (interval) => {
+    var newtoday = new Date();
+    var year = newtoday.getFullYear();
+    var month = String(newtoday.getMonth() + 1).padStart(2, '0');
+    var day = String(newtoday.getDate()).padStart(2, '0');
+    var formattedDate = year + '-' + month + '-' + day;
+    const today = new Date(formattedDate);
+    const from_date = new Date(today);
 
-  const handleChange = (event) => {
-    setSelectedOption(event.target.value);
+    if (interval === "last-day") {
+      from_date.setDate(today.getDate() - 1);
+    } else if (interval === "last-7-days") {
+      from_date.setDate(today.getDate() - 7);
+    } else if (interval === "last-month") {
+      from_date.setDate(today.getDate() - 30);
+    }
+   
+    const to_date = today.toISOString().slice(0, 10);
+    return { from_date: from_date.toISOString().slice(0, 10), to_date };
   };
 
-  const AqiChange = (event) => {
-    setAqiSelect(event.target.value);
+  const fetchAirQualityData = async (from_date, to_date) => {
+    try {
+      const baseurl = getBaseUrl();
+      const url = `${baseurl}get-Top10Cities/?from_date=${from_date}&to_date=${to_date}&parameter=${selectedParameter}`;
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
+      }
+
+      const airQualityData = await response.json();
+      setCitiesData(airQualityData);
+      setError(null); // Reset error state if successful
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Failed to fetch data. Please try again."); // Set an error message
+    }
   };
 
   return (
@@ -64,7 +97,7 @@ const Component3 = () => {
           <div className="select flex flex-row gap-4">
             <select
               className="border border-gray-300 p-2 rounded-md mt-3"
-              onChange={handleChange}
+              onChange={(e) => setSelectedOption(e.target.value)}
               value={selectedOption}
             >
               {options.map((option) => (
@@ -75,8 +108,8 @@ const Component3 = () => {
             </select>
             <select
               className="border border-gray-300 p-2 rounded-md mt-3"
-              onChange={AqiChange}
-              value={AqiSelect}
+              onChange={(e) => setSelectedParameter(e.target.value)}
+              value={selectedParameter}
             >
               {AqiOptions.map((option) => (
                 <option key={option} value={option}>
@@ -87,53 +120,57 @@ const Component3 = () => {
           </div>
         </div>
         <div className="C3-table">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Rank
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  City
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  AQI
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {citiesData.map((city, index) => (
-                <tr key={index + 1}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{index + 1}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{city.name}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        city.aqi > 150
-                          ? "bg-red-100 text-red-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {city.aqi}
-                    </span>
-                  </td>
+          {error ? (
+            <p className="text-red-500">{error}</p>
+          ) : (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Rank
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    City
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    AQI
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {citiesData.map((city, index) => (
+                  <tr key={index + 1}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{index + 1}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{city.City}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          city[selectedParameter] > 150
+                            ? "bg-red-100 text-red-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {city[selectedParameter] !== 0 ? city[selectedParameter] : "N/A"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </>

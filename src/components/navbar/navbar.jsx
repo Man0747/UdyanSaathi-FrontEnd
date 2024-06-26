@@ -1,6 +1,7 @@
 import React, { useState, NavLink,useEffect } from "react";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
+import { getBaseUrl, setStationName, setUrl } from "../Connectivity/storageHelper";
 
 function Navbar({onSearchSelected }) {
   var apiUrl = " ";
@@ -35,7 +36,8 @@ function Navbar({onSearchSelected }) {
   useEffect(() => {
     // Make an API call to fetch the data when searchTerm changes
     if (searchTerm.length >= 3) {
-      fetch(`http://127.0.0.1:8000/api/get-stations/?pol_Station=${searchTerm}&pol_Date=${formattedDateTime}`)
+      const baseUrl = getBaseUrl()
+      fetch(`${baseUrl}get-stations/?pol_Station=${searchTerm}&pol_Date=${formattedDateTime}`)
         .then(response => response.json())
         .then(data => {
           setDefaultSuggestions(data.map(station => station.Station));
@@ -115,7 +117,7 @@ function Navbar({onSearchSelected }) {
     
     console.log(formattedDateTime);    
 
-    const baseUrl = 'http://127.0.0.1:8000/api/';
+    const baseUrl = getBaseUrl();
     const endpoint = 'get-pollution-by-date-station/';
     const queryParams = {
     pol_Date: formattedDateTime,
@@ -123,8 +125,8 @@ function Navbar({onSearchSelected }) {
     };
 
     apiUrl = `${baseUrl}${endpoint}?${new URLSearchParams(queryParams)}`;
-    localStorage.setItem('url', apiUrl);
-    localStorage.setItem('station', selectedSuggestion);
+    setUrl(apiUrl);
+    setStationName(selectedSuggestion);
     console.log(`Performing a search with the selected suggestion: ${apiUrl}`);
   };
   
@@ -132,8 +134,8 @@ function Navbar({onSearchSelected }) {
   return (
     <nav className="sticky top-0 z-10 bg-white backdrop-filter backdrop-blur-2xl bg-opacity-10 shadow-2xl border-slate-800">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="/" className="flex items-center">
-          <img src="/logo.jpeg" className="h-8 mr-3 bg-transparent rounded-2xl" alt="Udyan Sathi Logo" />
+        <a href="/" className="flex items-center gap-3">
+          <img src="/logo.jpeg" className="h-8 bg-transparent rounded-2xl" alt="Udyan Sathi Logo" />
           <span className="text-2xl  text-black font-semibold">
             Udyan Sathi
           </span>
@@ -173,30 +175,29 @@ function Navbar({onSearchSelected }) {
           }`}>
           <ul className="flex flex-col md:flex-row md:space-x-8">
           <div className="flex space-x-4 text-black items-center">
-            <a
+            <Link
               href="/"
               className="hover:text-slate-600 transition ease-in-out delay-100"
             >
               Air Quality
-            </a>
-            {/* <a
-              href="/water-quality"
-              className="hover:text-slate-600 transition ease-in-out delay-100"
-            >
-              Water Quaity
-            </a>
-            <a
-              href="/stats"
-              className="hover:text-slate-600 transition ease-in-out delay-100"
-            >
-              Blogs
-            </a> */}
-            {/* <Searchbox /> */}
+            </Link>
+            <Link
+                to="/water-quality-index"
+                className="hover:text-slate-600 transition ease-in-out delay-100"
+              >
+                Water Quality
+              </Link>
+              <Link
+                to="/weather"
+                className="hover:text-slate-600 transition ease-in-out delay-100"
+              >
+                Weather
+              </Link>
           </div>
             <div className="relative hidden md:block">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                  className="w-4 h-4 text-black "
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -214,7 +215,7 @@ function Navbar({onSearchSelected }) {
               <input
                 type="text"
                 id="search-navbar"
-                className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full p-2 pl-10 text-sm  border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
                 placeholder="Search..."
                 ref={searchInput}
                 value={searchTerm}

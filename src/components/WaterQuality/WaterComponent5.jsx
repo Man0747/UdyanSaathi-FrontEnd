@@ -1,65 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { getBaseUrl } from "../Connectivity/storageHelper";
+import React from "react";
+import { useState, useEffect } from "react";
 
-const Component5 = () => {
-  const [citiesData, setCitiesData] = useState([]);
+const WaterComponent5 = () => {
   const [selectedOption, setSelectedOption] = useState("last-day");
   const [selectedParameter, setSelectedParameter] = useState("AQI");
   const [error, setError] = useState(null);
+
   const options = ["last-day", "last-7-days", "last-month"];
-  const AqiOptions = ["CO", "NH3", "NO2", "OZONE", "PM25", "PM10", "SO2", "AQI"];
-
-  useEffect(() => {
-    // Calculate the from_date and to_date based on the selected time interval
-    const { from_date, to_date } = getDateRange(selectedOption);
-    
-    // Fetch air quality data using the parameterized URL
-    fetchAirQualityData(from_date, to_date);
-  }, [selectedOption, selectedParameter]);
-
-  const getDateRange = (interval) => {
-    var newtoday = new Date();
-    var year = newtoday.getFullYear();
-    var month = String(newtoday.getMonth() + 1).padStart(2, '0');
-    var day = String(newtoday.getDate()).padStart(2, '0');
-    var formattedDate = year + '-' + month + '-' + day;
-    const today = new Date(formattedDate);
-    const from_date = new Date(today);
-
-    if (interval === "last-day") {
-      from_date.setDate(today.getDate() - 1);
-    } else if (interval === "last-7-days") {
-      from_date.setDate(today.getDate() - 7);
-    } else if (interval === "last-month") {
-      from_date.setDate(today.getDate() - 30);
-    }
-
-    const to_date = today.toISOString().slice(0, 10);
-    return { from_date: from_date.toISOString().slice(0, 10), to_date };
-  };
-
-  const fetchAirQualityData = async (from_date, to_date) => {
-    try {
-      const baseurl = getBaseUrl();
-      const url = `${baseurl}get-Top10LeastPollutedCities/?from_date=${from_date}&to_date=${to_date}&parameter=${selectedParameter}`;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch data: ${response.statusText}`);
-      }
-
-      const airQualityData = await response.json();
-      setCitiesData(airQualityData);
-      setError(null); // Reset error state if successful
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError("Failed to fetch data. Please try again."); // Set an error message
-    }
-  };
-
+  const WqiOptions = [
+    "CO",
+    "NH3",
+    "NO2",
+    "OZONE",
+    "PM25",
+    "PM10",
+    "SO2",
+    "AQI",
+  ];
   return (
     <>
-      <div className="C3-container flex flex-col gap-3 m-6 rounded-2xl">
+      <div className="C3-container flex flex-col gap-3 m-8 rounded-2xl">
         <div className="C3-txt">
           <div className="C3-heading flex flex-row items-center gap-2">
             <h3 className="text-xl text-[#33a0d3]">
@@ -111,7 +71,7 @@ const Component5 = () => {
               onChange={(e) => setSelectedParameter(e.target.value)}
               value={selectedParameter}
             >
-              {AqiOptions.map((option) => (
+              {WqiOptions.map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -147,27 +107,21 @@ const Component5 = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {citiesData.map((city, index) => (
-                  <tr key={index + 1}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{index + 1}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{city.City}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          city[selectedParameter] > 150
-                            ? "bg-red-100 text-red-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
-                      >
-                        {city[selectedParameter] !== 0 ? city[selectedParameter] : "N/A"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">1. </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900"> River</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium `}
+                    >
+                      river
+                    </span>
+                  </td>
+                </tr>
               </tbody>
             </table>
           )}
@@ -177,4 +131,4 @@ const Component5 = () => {
   );
 };
 
-export default Component5;
+export default WaterComponent5;

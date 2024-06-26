@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
 import AnimatedBackground from "../Animations/AnimatedBackground";
+import { getUrl } from '../Connectivity/storageHelper';
 
 const Component1 = ({selectedSearch}) => {
   const [state, setState] = useState({
@@ -16,7 +17,7 @@ const Component1 = ({selectedSearch}) => {
 
   const getPollutionData = async () => {
     try {
-      const apiurl = localStorage.getItem('url');
+      const apiurl = getUrl();
       const response = await fetch(apiurl);
       const data = await response.json();
       console.log('DATA:', data);
@@ -67,14 +68,17 @@ const Component1 = ({selectedSearch}) => {
       month: 'short',
       day: 'numeric',
       hour: 'numeric',
-      minute: 'numeric',
+      minute: '2-digit', // Use two digits for minute
+      hour12: true, // Use 12-hour clock
       timeZone: 'UTC',
     };
-
+  
     const formattedDate = new Date(dateString).toLocaleString('en-US', options);
-
+    
     return formattedDate;
   };
+  
+  
   return (
     <>
       <div className="relative rounded-2xl h-full">
@@ -96,7 +100,7 @@ const Component1 = ({selectedSearch}) => {
             <div className="C1-p1 flex flex-col justify-center gap-1">
             {pollution.map((pol) =>(
                   <p key={pol.id} className="text-slate-500 text-xm">
-                    Last Update: {formatDate(pol.Date)}
+                    Last Update: {(pol.Pol_Date)}
                   </p>
                  ))}
 
