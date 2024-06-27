@@ -23,7 +23,7 @@ function setBaseUrl() {
 
 // Function to get the station name
 function getBaseUrl() {
-    window.BaseurlName = "http://127.0.0.1:8000/api/";
+    window.BaseurlName = "https://udyansaathiapi.azurewebsites.net/api/";
     return window.BaseurlName || '';
 }
 
