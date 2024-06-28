@@ -17,15 +17,17 @@ function getUrl() {
 }
 
 
-function setBaseUrl() {
-   
+function setTodayDate(text) {
+   window.TodayDate = text;
 }
-
+function getTodayDate() {
+    return window.TodayDate;
+}
 // Function to get the station name
 function getBaseUrl() {
-    window.BaseurlName = "https://udyansaathiapi.azurewebsites.net/api/";
+    window.BaseurlName = " https://udyansaathiapi.azurewebsites.net/api/";
     return window.BaseurlName || '';
 }
 
 // Export the functions to be used in other scripts
-export { setStationName, getStationName,setUrl,getUrl,setBaseUrl,getBaseUrl };
+export { setStationName, getStationName,setUrl,getUrl,getBaseUrl,setTodayDate,getTodayDate };

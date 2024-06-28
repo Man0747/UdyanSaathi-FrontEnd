@@ -133,7 +133,7 @@
 .C8 {
   box-shadow: 1px 1px 3px 2px #ccc;
   width: 100%;
-}
+ } 
 .ic-1 {
   width: 80px;
   display: flex;
@@ -153,8 +153,8 @@
 .ic-span {
   font-size: x-small;
   font-weight: lighter;
-  color: rgb(69, 78, 86);
-}
+  color: #454e56;
+} */
 
 .p-h {
   color: #656565;

@@ -35,12 +35,15 @@ const createMarkerIcon = (aqi, highlight) => {
     return icon;
 };
 
-const CustomMapMarker = forwardRef(({ position, aqi, station, city, polDate, highlight,Longitude,Latitude }, ref) => {
+const CustomMapMarker = forwardRef(({ position, aqi, station, city, polDate, highlight, shouldOpenPopup }, ref) => {
     const markerRef = useRef(null);
 
     useEffect(() => {
         const marker = markerRef.current;
         if (marker) {
+            if (shouldOpenPopup) {
+                marker.openPopup();
+            }
             const openPopup = () => {
                 marker.openPopup();
             };
@@ -59,7 +62,7 @@ const CustomMapMarker = forwardRef(({ position, aqi, station, city, polDate, hig
                 marker.off('click', openPopup);
             };
         }
-    }, []);
+    }, [shouldOpenPopup]);
 
     const size = highlight ? 50 : 35; // Define size here
     const markerIcon = createMarkerIcon(aqi, highlight);
@@ -73,14 +76,13 @@ const CustomMapMarker = forwardRef(({ position, aqi, station, city, polDate, hig
                     {city}
                     <br />
                     <strong>Last reading: {polDate}</strong>
-                    {/* <br/>
-                    {Longitude}
-                    <br/>
-                    {Latitude} */}
                 </div>
             </Popup>
         </Marker>
     );
 });
+
+// Add display name for the component
+CustomMapMarker.displayName = 'CustomMapMarker';
 
 export default CustomMapMarker;

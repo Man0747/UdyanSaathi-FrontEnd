@@ -66,7 +66,7 @@ const Component8 = (selectedSearch) => {
     <div className="cal-container m-8">
       <div className="cal-txt flex flex-row items-center justify-between">
         <h1 className="text-2xl text-black font-bold text-start mb-2 align-middle">
-          AQI Calendar
+          AQI Heat Map
         </h1>
         <div className="markings flex flex-row">
           <div className="w-24 h-7 bg-[#34a12b] flex justify-center items-center">

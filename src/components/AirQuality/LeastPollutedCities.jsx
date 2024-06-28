@@ -10,50 +10,48 @@ const Component5 = () => {
   const AqiOptions = ["CO", "NH3", "NO2", "OZONE", "PM25", "PM10", "SO2", "AQI"];
 
   useEffect(() => {
-    // Calculate the from_date and to_date based on the selected time interval
-    const { from_date, to_date } = getDateRange(selectedOption);
-    
-    // Fetch air quality data using the parameterized URL
-    fetchAirQualityData(from_date, to_date);
+    fetchData();
   }, [selectedOption, selectedParameter]);
 
-  const getDateRange = (interval) => {
-    var newtoday = new Date();
-    var year = newtoday.getFullYear();
-    var month = String(newtoday.getMonth() + 1).padStart(2, '0');
-    var day = String(newtoday.getDate()).padStart(2, '0');
-    var formattedDate = year + '-' + month + '-' + day;
-    const today = new Date(formattedDate);
-    const from_date = new Date(today);
-
-    if (interval === "last-day") {
-      from_date.setDate(today.getDate() - 1);
-    } else if (interval === "last-7-days") {
-      from_date.setDate(today.getDate() - 7);
-    } else if (interval === "last-month") {
-      from_date.setDate(today.getDate() - 30);
+  const fetchData = async () => {
+    try {
+      const to_date = getDateRange(selectedOption);
+      const airQualityData = await fetchAirQualityData(to_date);
+      setCitiesData(airQualityData);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Failed to fetch data. Please try again.");
     }
-
-    const to_date = today.toISOString().slice(0, 10);
-    return { from_date: from_date.toISOString().slice(0, 10), to_date };
   };
 
-  const fetchAirQualityData = async (from_date, to_date) => {
+  const getDateRange = (interval) => {
+    let to_date = 1; // Default to_date value
+
+    if (interval === "last-day") {
+      to_date = 1;
+    } else if (interval === "last-7-days") {
+      to_date = 6;
+    } else if (interval === "last-month") {
+      to_date = 30;
+    }
+
+    return String(to_date);
+  };
+
+  const fetchAirQualityData = async (to_date) => {
     try {
       const baseurl = getBaseUrl();
-      const url = `${baseurl}get-Top10LeastPollutedCities/?from_date=${from_date}&to_date=${to_date}&parameter=${selectedParameter}`;
+      const url = `${baseurl}get-Top10LeastPollutedCities/?to_date=${to_date}`;
       const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
 
-      const airQualityData = await response.json();
-      setCitiesData(airQualityData);
-      setError(null); // Reset error state if successful
+      return await response.json();
     } catch (error) {
-      console.error("Error fetching data:", error);
-      setError("Failed to fetch data. Please try again."); // Set an error message
+      throw new Error(`Error fetching data: ${error.message}`);
     }
   };
 
@@ -157,11 +155,7 @@ const Component5 = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          city[selectedParameter] > 150
-                            ? "bg-red-100 text-red-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800`}
                       >
                         {city[selectedParameter] !== 0 ? city[selectedParameter] : "N/A"}
                       </span>

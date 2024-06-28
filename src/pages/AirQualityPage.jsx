@@ -1,13 +1,14 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import Navbar from '../components/navbar/navbar';
-import Component1 from "../components/AirQuality/Component1";
-import Component2 from "../components/AirQuality/Component2";
-import Component3 from "../components/AirQuality/Component3";
-import Component4 from "../components/AirQuality/Component4";
-import Component5 from "../components/AirQuality/Component5"; 
-import Component6 from "../components/AirQuality/Component6";
-import Component7 from "../components/AirQuality/Component7";
-import Component8 from "../components/AirQuality/Component8";
+import AqiDetails from "../components/AirQuality/AqiDetails";
+import Component2 from "../components/AirQuality/AqiPollutants";
+import Component3 from "../components/AirQuality/MostPollutedCities";
+import Component4 from "../components/AirQuality/HealthAndMl";
+import Component5 from "../components/AirQuality/LeastPollutedCities"; 
+import Component6 from "../components/AirQuality/CompareDataGraph";
+import Component7 from "../components/AirQuality/MetroCitiesDetails";
+import Component8 from "../components/AirQuality/AqiHeatMap";
 import Map from "../components/AirQuality/Map";
 import { setStationName } from '../components/Connectivity/storageHelper';
 function AirQualityPage() {
@@ -85,8 +86,7 @@ function AirQualityPage() {
 
   return (
     <>
-    <div>
-      <Navbar onSearchSelected={handleSearchSelected} />
+     <Navbar onSearchSelected={handleSearchSelected} />
       {dangerAlert && (
         <div
           role="alert"
@@ -103,49 +103,61 @@ function AirQualityPage() {
           </div>
         </div>
       )}
-        <div className="home-row-1 m-5 flex flex-row relative">
-        <div className="C1 m-3 rounded-2xl s">
-          <Component1 selectedSearch={selectedSearch}/>
+
+    <div>
+      {/* AQI PAGE ROW 1 */}
+      <div className="m-5 flex flex-col lg:flex-row gap-5">
+        <div className="lg:w-[60%] w-full shadow-custom-shadow z-[-1] rounded-2xl">
+          <AqiDetails selectedSearch={selectedSearch} />
         </div>
-        <div className="C2 m-3 relative rounded-2xl">
-          <Component2 selectedSearch={selectedSearch}  onData={handleChildData}/>
+        <div className="lg:w-[40%] w-full shadow-custom-shadow rounded-2xl">
+          <Component2 selectedSearch={selectedSearch} onData={handleChildData} />
         </div>
-        
       </div>
-      <div className="home-row-2 flex flex-row relative m-5">
-        <div className="C3 m-3 rounded-2xl bg-white">
+      <div className="flex flex-col relative m-5 gap-5">
+      <div className="w-full  shadow-custom-shadow m-3 rounded-2xl bg-white">
+        <Map  selectedSearch={selectedSearch}/>
+      </div>
+      </div>
+      {/* AQI PAGE ROW 2 */}
+      <div className="flex flex-col lg:flex-row relative m-5 gap-3">
+        <div className="lg:w-[30%] w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
           <Component3 />
         </div>
-        <div className="C4 m-3 rounded-2xl bg-white">
+        <div className="lg:w-[70%] w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
           <Component4 />
         </div>
       </div>
+
     </div>
-    <div className="home-row-3 flex flex-row relative m-5">
-        <div className="C5 m-3 rounded-2xl bg-white">
-          <Component5 />
-        </div>
-        <div className="C6 m-3 rounded-2xl bg-white">
-          <Component6 />
-        </div>
+
+    {/* AQI PAGE ROW 3 */}
+    <div className="flex flex-col lg:flex-row relative m-5 gap-3">
+      <div className="lg:w-[30%] w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+        <Component5 />
       </div>
-      <div className="home-row-4 flex flex-row relative m-5">
-        <div className="C7 m-3 rounded-2xl bg-white">
-          <Component7 />
-        </div>
+      <div className="lg:w-[70%] w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+        <Component6 />
       </div>
-      <div className="home-row-5 flex flex-row relative m-5">
-        <div className="C8 m-3 rounded-2xl bg-white ">
-          <Component8 selectedSearch={selectedSearch}/>
+    </div>
+
+    
+    <div className="flex flex-col relative m-5 gap-5">
+      {/* AQI PAGE ROW 4 */}
+      <div className="w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+        <Component7 />
+      </div>
+
+      {/* AQI PAGE ROW 5 */}
+      <div className="w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+        <Component8 selectedSearch={selectedSearch} />
+      </div>
+
+      {/* AQI PAGE ROW 6 */}
       
-          
-        </div>
-      </div>
-      <div className="home-row-6 flex flex-row relative m-5">
-        <div className="C8 m-3 rounded-2xl bg-white ">
-        </div>
-      </div>
-      <Map></Map>
+    </div>
+
+      
       </>
   );
 }

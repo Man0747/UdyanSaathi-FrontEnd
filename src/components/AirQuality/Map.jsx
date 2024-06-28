@@ -1,14 +1,16 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
-import CustomMapMarker from './CustomMapMarker'; 
+import axios from 'axios';
+import CustomMapMarker from './CustomMapMarker'; // Ensure you have CustomMapMarker component
 import 'leaflet/dist/leaflet.css';
-import { getBaseUrl } from '../Connectivity/storageHelper';
+import { getBaseUrl } from '../Connectivity/storageHelper'; // Adjust imports as needed
 
-const Map = () => {
+const Map = ({ selectedSearch }) => {
     const [data, setData] = useState([]);
-    const [userLocation, setUserLocation] = useState(null);
-    const [nearestStation, setNearestStation] = useState(null);
-    const popups = useRef([]);
+    const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]);
+    const [level, setLevel] = useState(5);
+    const [key, setKey] = useState(0);
+    const [popupStation, setPopupStation] = useState(null);
 
     useEffect(() => {
         const baseurl = getBaseUrl();
@@ -16,64 +18,33 @@ const Map = () => {
             .then(response => response.json())
             .then(data => setData(data))
             .catch(error => console.error('Error fetching AQI data:', error));
-
-        // Get user's location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setUserLocation({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    });
-                    
-                },
-                (error) => {
-                    console.error('Error getting user location:', error);
-                }
-            );
-        } else {
-            console.error('Geolocation is not supported by this browser.');
-        }
-    }, []);
+    }, [selectedSearch]);
 
     useEffect(() => {
-        if (userLocation && data.length > 0) {
-            findNearestStation(userLocation);
+        if (selectedSearch) {
+            const fetchMapCenter = async () => {
+                try {
+                    const response = await axios.get(`https://udyansaathiapi.azurewebsites.net/api/get-stations_coordinates/?pol_Station=${encodeURIComponent(selectedSearch)}`);
+                    const stationData = response.data[0];
+                    if (stationData) {
+                        setMapCenter([stationData.Latitude, stationData.Longitude]);
+                        setLevel(12);
+                        setKey(prevKey => prevKey + 1);
+                        setPopupStation(selectedSearch); // Update the station for which to show popup
+                    } else {
+                        console.error('Station data not found.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching station coordinates:', error);
+                }
+            };
+            fetchMapCenter();
         }
-    }, [userLocation, data]);
-
-    const findNearestStation = (location) => {
-        const userLat = parseFloat(location.lat);
-        const userLng = parseFloat(location.lng);
-        console.log("Lat:",userLat);
-        console.log("Lng:",userLng);
-        let closestStation = null;
-        let minDistance = Infinity;
-
-        data.forEach((station, index) => {
-            const distance = Math.sqrt(
-                Math.pow(station.Latitude - userLat, 2) + Math.pow(station.Longitude - userLng, 2)
-            );
-            if (distance < minDistance) {
-                closestStation = station;
-                minDistance = distance;
-            }
-        });
-
-        setNearestStation(closestStation);
-
-        // Find the index of the nearest station in the data array
-        const nearestIndex = data.findIndex(station => station === closestStation);
-
-        // Trigger the popup of the nearest station
-        if (nearestIndex !== -1 && popups.current[nearestIndex]) {
-            popups.current[nearestIndex].openPopup();
-        }
-    };
+    }, [selectedSearch]);
 
     return (
         <div>
-            <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: '100vh', width: '100%' }}>
+            <MapContainer key={key} center={mapCenter} animate={true} zoom={level} style={{ height: '60vh', width: '100%' }}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -86,10 +57,8 @@ const Map = () => {
                         station={row.Station}
                         city={row.City}
                         polDate={row.Pol_Date}
-                        Latitude={row.Longitude}
-                        Longitude={row.Latitude}
-                        highlight={nearestStation && nearestStation.Station === row.Station}
-                        ref={(el) => popups.current[index] = el}
+                        highlight={popupStation && popupStation === row.Station}
+                        shouldOpenPopup={popupStation && popupStation === row.Station}
                     />
                 ))}
             </MapContainer>
