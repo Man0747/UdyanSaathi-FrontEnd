@@ -115,6 +115,7 @@ function Navbar({onSearchSelected }) {
     // Get the current date and time
     
     
+  
     console.log(formattedDateTime);    
 
     const baseUrl = getBaseUrl();

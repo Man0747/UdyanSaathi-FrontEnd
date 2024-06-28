@@ -1,39 +1,72 @@
 import React, { useEffect, useState } from "react";
-import { getBaseUrl } from "../Connectivity/storageHelper";
+import { getBaseUrl, getStationName, getTodayDate } from "../Connectivity/storageHelper";
 
 const Component4 = (selectedSearch) => {
   const [aqiData, setAqiData] = useState(null);
+  const [next5Dates, setNext5Dates] = useState([]);
 
   useEffect(() => {
     getPollutionData();
+    generateNext5Dates();
   }, [selectedSearch]);
 
-  const getPollutionData = async () => {
-      try {
-        const selectstation = getStationName();
-        const baseurl = getBaseUrl();
-        const response = await fetch(
-          `${baseurl}get-MLData/?pol_Station=${selectstation}`
-        );
+  const generateNext5Dates = () => {
+    try {
+      const todaydate = getTodayDate();
+      if (!todaydate) throw new Error("Today's date is invalid or not provided.");
+      
+      const dateWithoutTime = todaydate.split(" ")[0]; // Extracts "2024-06-28"
+      const startDate = new Date(dateWithoutTime);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
+      // Array to store the next 5 dates
+      const next5Dates = [];
 
-        const data = await response.json();
-        console.log(data);
-        setAqiData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error.message);
+      // Loop to generate next 5 dates
+      for (let i = 0; i < 5; i++) {
+        const currentDate = new Date(startDate); // Create a new date object each iteration
+        currentDate.setDate(startDate.getDate() + i); // Increment the date by i days
+        const options = {
+          day: 'numeric',
+          month: 'short',
+        };
+        const formattedDate = currentDate.toLocaleString('en-US', options);
+        next5Dates.push(formattedDate);
       }
-    };
+
+      console.log('Next 5 Dates:', next5Dates);
+      setNext5Dates(next5Dates);
+    } catch (error) {
+      console.error("Error generating next 5 dates:", error.message);
+    }
+  };
+
+  const getPollutionData = async () => {
+    try {
+      const selectstation = getStationName();
+      const baseurl = getBaseUrl();
+      const response = await fetch(
+        `${baseurl}get-MLData/?pol_Station=${selectstation}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+     
+      const data = await response.json();
+      console.log(data);
+      setAqiData(data);
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+    }
+  };
 
   return (
     <>
-      <div className="C4-container m-8">
-        <div className="C4-top">
-          <div className="C4-txt">
-            <div className="C4-heading flex flex-row items-center gap-2">
+      <div className="m-8">
+        {/* HEALTH ADVICE */}
+        <div >
+          <div >
+            <div className="flex flex-row items-center gap-2">
               <h1 className="text-xl text-[#33a0d3]">Health Advice</h1>
               <span>
                 <svg
@@ -94,73 +127,28 @@ const Component4 = (selectedSearch) => {
           </div>
         </div>
         
-        <div className="C4-bottom">
+        {/*AIR QUALITY FORECAST*/}
+        <div>
           <div className=" bg-[#33a0d3] text-white mt-20 h-9 flex justify-center items-center rounded-2xl">
             <p>Air Quality Forecast</p>
           </div>
           <div className="flex flex-row justify-evenly items-center">
-          <div className="part-2 flex-col mt-3 justify-evenly">
-            {aqiData &&
-              aqiData.map((day, index) => (
-                <div key={index} className="component flex flex-col justify-center items-center gap-3">
-                  <span>{`Day ${index + 1}`}</span>
-                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 1}`]}</h1>
-                    <span className="text-sm text-slate-500 ">AQI</span>
-                  </div>
-                </div>
-              ))}
+            {/* Mapping over next5Dates array to display each date */}
+            {next5Dates.map((date, index) => (
+              <div key={index} className="part-2 flex-col mt-3 justify-evenly">
+                {aqiData &&
+                  aqiData.map((day, dataIndex) => (
+                    <div key={dataIndex} className="flex flex-col justify-center items-center gap-3">
+                      <span>{date}</span>
+                      <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
+                        <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 1}`]}</h1>
+                        <span className="text-sm text-slate-500 ">AQI</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ))}
           </div>
-          <div className="part-2 flex-col mt-3 justify-evenly3">
-          {aqiData &&
-              aqiData.map((day, index) => (
-                <div key={index} className="component flex flex-col justify-center items-center gap-3">
-                  <span>{`Day ${index + 2}`}</span>
-                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 2}`]}</h1>
-                    <span className="text-sm text-slate-500 ">AQI</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="part-2 flex-col mt-3 justify-evenly">
-            {aqiData &&
-              aqiData.map((day, index) => (
-                <div key={index} className="component flex flex-col justify-center items-center gap-3">
-                  <span>{`Day ${index + 3}`}</span>
-                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 3}`]}</h1>
-                    <span className="text-sm text-slate-500 ">AQI</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="part-2 flex-col mt-3 justify-evenly">
-            {aqiData &&
-              aqiData.map((day, index) => (
-                <div key={index} className="component flex flex-col justify-center items-center gap-3">
-                  <span>{`Day ${index + 4}`}</span>
-                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 4}`]}</h1>
-                    <span className="text-sm text-slate-500 ">AQI</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="part-2 flex-col mt-3 justify-evenly">
-            {aqiData &&
-              aqiData.map((day, index) => (
-                <div key={index} className="component flex flex-col justify-center items-center gap-3">
-                  <span>{`Day ${index + 5}`}</span>
-                  <div className="green bg-[#ecffeb] flex flex-col rounded-xl px-8 py-3 items-center justify-center gap-2">
-                    <h1 className="text-xl text-[#5e5e5e] font-bold">{day[`Day${index + 5}`]}</h1>
-                    <span className="text-sm text-slate-500 ">AQI</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-            
         </div>
       </div>
     </>

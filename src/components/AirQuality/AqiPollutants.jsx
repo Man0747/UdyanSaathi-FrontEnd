@@ -1,10 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
-// import AnimatedBackground from "../animations/AnimatedBackground";
+import AnimatedBackground from "../animations/AnimatedBackground";
 import { getUrl } from "../Connectivity/storageHelper";
 
 const Component2 = ({ selectedSearch, onData }) => {
-  const [pollutionToChild, setPollutionToChild] = useState("");
   const [state, setState] = useState({
     value: 60, // Default initial value
     color: "transparent",
@@ -12,27 +14,19 @@ const Component2 = ({ selectedSearch, onData }) => {
 
   const [pollution, setPollution] = useState([]);
 
+  //Call FUNCTION TO CALL API FOR DATA
   useEffect(() => {
     getPollutionData();
   }, [selectedSearch]);
 
+  //API CALL FOR DATA
   const getPollutionData = async () => {
     try {
       const apiurl = getUrl();
       const response = await fetch(apiurl);
       const data = await response.json();
-      console.log("DATA:", data);
+      // console.log("DATA:", data);
       setPollution(data);
-
-      // useEffect(() => {
-      //   // Simulate data fetching or any other asynchronous operation
-      //   const fetchData = async () => {
-      //     const data = pollution;
-      //     onData(data);
-      //   };
-
-      //   fetchData();
-      // }, [onData]);
       onData(data);
 
       if (data.length > 0) {
@@ -46,49 +40,22 @@ const Component2 = ({ selectedSearch, onData }) => {
     }
   };
 
-  const setColorForValue = (value) => {
-    let color;
-
-    if (value <= 50) {
-      color = "#24c45c";
-    } else if (value <= 100) {
-      color = "#ecb40c";
-    } else if (value <= 200) {
-      color = "#fc7414";
-    } else if (value <= 300) {
-      color = "#ec4444";
-    } else if (value <= 400) {
-      color = "#7c1c1c";
-    } else {
-      color = "#5c1c84";
-    }
-
-    setState((prevState) => ({
-      ...prevState,
-      color,
-    }));
-  };
-
-  useEffect(() => {
-    setColorForValue(state.value);
-  }, [state.value]);
-
   return (
     <>
-      <div className="C2-container relative rounded-2xl p-9 flex flex-col justify-around h-full">
+      <div className="relative rounded-2xl p-9 flex flex-col justify-around h-full">
         <div className="absolute inset-0 rounded-2xl">
-          {/* <AnimatedBackground /> */}
+          <AnimatedBackground />
         </div>
-        <div className="C2-txt-1 mb-7 flex justify-center ">
+        <div className="mb-7 flex justify-center ">
           {pollution.map((pol) => (
             <p key={pol.id} className="text-xl text-[#33a0d3]">
               Major Air pollutants in {pol.City}
             </p>
           ))}
         </div>
-        <div className="poll-container flex flex-col gap-5">
-          <div className="poll-row-1 flex flex-row justify-evenly">
-            <div className="ic-1">
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-row justify-evenly">
+            <div className="w-20 flex flex-col items-center py-5 gap-2.5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="44"
@@ -106,14 +73,13 @@ const Component2 = ({ selectedSearch, onData }) => {
                 />
               </svg>
               {pollution.map((pol) => (
-                <p key={pol.id} className="ic-txt">
+                <p key={pol.id} className="text-center flex flex-col text-base font-medium">
                   {pol.PM25}
-                  <span className="ic-span">(PM2.5)</span>
-                  {/* {checkPM25Threshold(pol.PM25)} */}
+                  <span className="text-xs font-extralight">(PM2.5)</span>
                 </p>
               ))}
             </div>
-            <div className="ic-1">
+            <div className="w-20 flex flex-col items-center py-5 gap-2.5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="44"
@@ -131,14 +97,13 @@ const Component2 = ({ selectedSearch, onData }) => {
                 />
               </svg>
               {pollution.map((pol) => (
-                <p key={pol.id} className="ic-txt">
+                <p key={pol.id} className="text-center flex flex-col text-base font-medium">
                   {pol.PM10}
-                  <span className="ic-span">(PM10)</span>
-                  {/* {checkPM10Threshold(pol.PM10)} */}
+                  <span className="text-xs font-extralight">(PM10)</span>
                 </p>
               ))}
             </div>
-            <div className="ic-1">
+            <div className="w-20 flex flex-col items-center py-5 gap-2.5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="44"
@@ -156,16 +121,15 @@ const Component2 = ({ selectedSearch, onData }) => {
                 />
               </svg>
               {pollution.map((pol) => (
-                <p key={pol.id} className="ic-txt">
+                <p key={pol.id} className="text-center flex flex-col text-base font-medium">
                   {pol.SO2}
-                  <span className="ic-span">(SO2)</span>
-                  {/* {checkSO2Threshold(pol.SO2)} */}
+                  <span className="text-xs font-extralight">(SO2)</span>
                 </p>
               ))}
             </div>
           </div>
           <div className="poll-row-2 flex flex-row justify-evenly">
-            <div className="ic-1">
+            <div className="w-20 flex flex-col items-center py-5 gap-2.5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="44"
@@ -183,14 +147,13 @@ const Component2 = ({ selectedSearch, onData }) => {
                 />
               </svg>
               {pollution.map((pol) => (
-                <p key={pol.id} className="ic-txt">
+                <p key={pol.id} className="text-center flex flex-col text-base font-medium">
                   {pol.CO}
-                  <span className="ic-span">(CO)</span>
-                  {/* {checkCOThreshold(pol.CO)} */}
+                  <span className="text-xs font-extralight">(CO)</span>
                 </p>
               ))}
             </div>
-            <div className="ic-1">
+            <div className="w-20 flex flex-col items-center py-5 gap-2.5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="44"
@@ -208,14 +171,13 @@ const Component2 = ({ selectedSearch, onData }) => {
                 />
               </svg>
               {pollution.map((pol) => (
-                <p key={pol.id} className="ic-txt">
+                <p key={pol.id} className="text-center flex flex-col text-base font-medium">
                   {pol.OZONE}
-                  <span className="ic-span">(OZONE)</span>
-                  {/* {checkOzoneThreshold(pol.OZONE)} */}
+                  <span className="text-xs font-extralight">(OZONE)</span>
                 </p>
               ))}
             </div>
-            <div className="ic-1">
+            <div className="w-20 flex flex-col items-center py-5 gap-2.5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="44"
@@ -233,10 +195,9 @@ const Component2 = ({ selectedSearch, onData }) => {
                 />
               </svg>
               {pollution.map((pol) => (
-                <p key={pol.id} className="ic-txt">
+                <p key={pol.id} className="text-center flex flex-col text-base font-medium">
                   {pol.NO2}
-                  <span className="ic-span">(NO2)</span>
-                  {/* {checkNO2Threshold(pol.NO2)} */}
+                  <span className="text-xs font-extralight">(NO2)</span>
                 </p>
               ))}
             </div>

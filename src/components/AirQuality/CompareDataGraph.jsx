@@ -53,7 +53,7 @@ const Component6 = () => {
         ? 29
         : 6;
     const baseurl = getBaseUrl();
-    const apiUrl = `${baseurl}get-GraphData/?pol_Station=${
+    const apiUrl = `${baseurl}get-GraphData/?pol_City=${
       city.value
     }&to_date=${toDate}`;
 
@@ -67,7 +67,7 @@ const Component6 = () => {
 
     if (compareCity) {
       const baseurl = getBaseUrl();
-      const compareApiUrl = `${baseurl}get-GraphData/?pol_Station=${
+      const compareApiUrl = `${baseurl}get-GraphData/?pol_City=${
         compareCity.value
       }&to_date=${toDate}`;
 
