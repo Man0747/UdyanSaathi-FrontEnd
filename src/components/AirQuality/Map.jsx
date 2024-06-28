@@ -24,7 +24,7 @@ const Map = ({ selectedSearch }) => {
         if (selectedSearch) {
             const fetchMapCenter = async () => {
                 try {
-                    const response = await axios.get(`http://127.0.0.1:8000/api/get-stations_coordinates/?pol_Station=${encodeURIComponent(selectedSearch)}`);
+                    const response = await axios.get(`https://udyansaathiapi.azurewebsites.net/api/get-stations_coordinates/?pol_Station=${encodeURIComponent(selectedSearch)}`);
                     const stationData = response.data[0];
                     if (stationData) {
                         setMapCenter([stationData.Latitude, stationData.Longitude]);
