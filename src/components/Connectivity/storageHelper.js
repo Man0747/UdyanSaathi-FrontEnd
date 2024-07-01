@@ -25,7 +25,7 @@ function getTodayDate() {
 }
 // Function to get the station name
 function getBaseUrl() {
-    window.BaseurlName = " http://127.0.0.1:8000/api/";
+    window.BaseurlName = "http://127.0.0.1:8000/api/";
     return window.BaseurlName || '';
 }
 
