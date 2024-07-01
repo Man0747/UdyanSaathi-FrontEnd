@@ -25,7 +25,7 @@ function getTodayDate() {
 }
 // Function to get the station name
 function getBaseUrl() {
-    window.BaseurlName = " https://udyansaathiapi.azurewebsites.net/api/";
+    window.BaseurlName = "https://apiudyansaathi.azurewebsites.net/api/";
     return window.BaseurlName || '';
 }
 
