@@ -14,7 +14,8 @@ function Navbar({ onSearchSelected }) {
   var stationdata = [];
   const fetchStationsData = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/get-MapData");
+      const baseUrl = getBaseUrl();
+      const response = await fetch(`${baseUrl}get-MapData`);
       stationdata = await response.json();
       console.log("Fetched stations data:", stationdata);
       getUserLocation();
