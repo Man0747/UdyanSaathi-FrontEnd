@@ -33,7 +33,7 @@ const Component4 = (selectedSearch) => {
         next5Dates.push(formattedDate);
       }
 
-      console.log('Next 5 Dates:', next5Dates);
+      // console.log('Next 5 Dates:', next5Dates);
       setNext5Dates(next5Dates);
     } catch (error) {
       console.error("Error generating next 5 dates:", error.message);
@@ -53,7 +53,7 @@ const Component4 = (selectedSearch) => {
       }
      
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       setAqiData(data);
     } catch (error) {
       console.error("Error fetching data:", error.message);

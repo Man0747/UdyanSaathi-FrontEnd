@@ -17,7 +17,7 @@ function Navbar({ onSearchSelected }) {
       const baseUrl = getBaseUrl();
       const response = await fetch(`${baseUrl}get-MapData`);
       stationdata = await response.json();
-      console.log("Fetched stations data:", stationdata);
+      // console.log("Fetched stations data:", stationdata);
       getUserLocation();
     } catch (error) {
       console.error("Error fetching stations:", error);
@@ -35,7 +35,7 @@ function Navbar({ onSearchSelected }) {
         }
       );
     } else {
-      console.log("Geolocation is not supported by this browser.");
+      // console.log("Geolocation is not supported by this browser.");
     }
   };
 
@@ -50,7 +50,7 @@ function Navbar({ onSearchSelected }) {
 
     stationdata.forEach((station) => {
       const distance = getDistanceFromLatLonInKm(userLat, userLong, station.Latitude, station.Longitude);
-      console.log(`Distance to ${station.Station}: ${distance} km`);
+      // console.log(`Distance to ${station.Station}: ${distance} km`);
 
       if (distance < minDistance) {
         minDistance = distance;
@@ -107,7 +107,7 @@ function Navbar({ onSearchSelected }) {
     const apiUrl = `${baseUrl}${endpoint}?${new URLSearchParams(queryParams)}`;
     setUrl(apiUrl);
     setStationName(selectedSuggestion);
-    console.log(`Performing a search with the selected suggestion: ${apiUrl}`);
+    // console.log(`Performing a search with the selected suggestion: ${apiUrl}`);
   };
 
   const toggleMobileMenu = () => {

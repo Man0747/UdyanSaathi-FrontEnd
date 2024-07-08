@@ -16,12 +16,12 @@ const Component8 = (selectedSearch) => {
       const selectstation = getStationName();
       try {
         const baseurl = getBaseUrl();
-        console.log(baseurl);
+        // console.log(baseurl);
         const response = await fetch(`${baseurl}get-AqiCalData/?pol_Station=${selectstation}`);
         const data = await response.json();
         setApiData(data);
-        console.log("Response:", response);
-        console.log("Data:", data);
+        // console.log("Response:", response);
+        // console.log("Data:", data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

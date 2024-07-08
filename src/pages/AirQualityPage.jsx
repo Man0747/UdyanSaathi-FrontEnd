@@ -23,7 +23,7 @@ function AirQualityPage() {
   const [childData, setChildData] = useState(null);
 
   const handleChildData = (data) => {
-    console.log("Data received from child:", data);
+    // console.log("Data received from child:", data);
 
     checkPollutionConditions(data);
     setChildData(data);
@@ -82,7 +82,7 @@ function AirQualityPage() {
     }
   };
 
-  console.log("Hello", childData);
+  // console.log("Hello", childData);
 
   return (
     <>

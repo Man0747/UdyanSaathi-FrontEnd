@@ -44,10 +44,10 @@ const WeatherComponent4 = () => {
         `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${api_key}`
       );
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       return { city, data };
     } catch (error) {
-      console.log(`Error fetching data for ${city}:`, error);
+      // console.log(`Error fetching data for ${city}:`, error);
       return null;
     }
   };

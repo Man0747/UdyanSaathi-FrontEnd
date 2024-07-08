@@ -17,7 +17,7 @@ const Component3 = () => {
     try {
       const to_date = getDateRange(selectedOption);
       const airQualityData = await fetchAirQualityData(to_date, selectedParameter);
-      console.log(airQualityData);
+      // console.log(airQualityData);
       setCitiesData(airQualityData);
       setError(null); // Reset error state if successful
     } catch (error) {

@@ -25,10 +25,10 @@ const WeatherComponent3 = () => {
         `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${api_key}`
       );
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       setWeatherData(data);
     } catch (error) {
-      console.log("Error:", error);
+      // console.log("Error:", error);
     }
   };
 
