@@ -21,7 +21,7 @@ const AqiDetails = ({selectedSearch}) => {
       const apiurl = getUrl();
       const response = await fetch(apiurl);
       const data = await response.json();
-      console.log('DATA:', data);
+      // console.log('DATA:', data);
       setPollution(data);
 
       if (data.length > 0) {
