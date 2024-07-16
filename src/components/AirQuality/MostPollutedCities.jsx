@@ -58,14 +58,14 @@ const Component3 = () => {
 
   return (
     <>
-      <div className="C3-container flex flex-col gap-3 m-8 rounded-2xl">
-        <div className="C3-txt">
-          <div className="C3-heading flex flex-row items-center gap-2">
+      <div className="flex flex-col gap-3 m-6 rounded-2xl">
+        <div>
+          <div className="flex flex-row items-center gap-2">
             <h3 className="text-xl text-[#33a0d3]">
               Most polluted cities in India
             </h3>
           </div>
-          <p className="text-sm text-slate-500 my-3 mb-4">
+          <p className="text-sm text-slate-500 my-1 mb-2">
             Real Time worst city rankings
           </p>
           <div className="select flex flex-row gap-4">
@@ -93,7 +93,7 @@ const Component3 = () => {
             </select>
           </div>
         </div>
-        <div className="C3-table">
+        <div>
           {error ? (
             <p className="text-red-500">{error}</p>
           ) : (
@@ -102,19 +102,19 @@ const Component3 = () => {
                 <tr>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Rank
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     City
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     AQI
                   </th>
@@ -123,13 +123,13 @@ const Component3 = () => {
               <tbody className="bg-white divide-y divide-gray-200">
   {citiesData.map((city, index) => (
     <tr key={index}>
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <div className="text-sm text-gray-900">{index + 1}</div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <div className="text-sm text-gray-900">{city.City}</div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800`}
         >

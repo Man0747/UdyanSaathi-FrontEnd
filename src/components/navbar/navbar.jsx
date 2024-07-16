@@ -11,13 +11,13 @@ function Navbar({ onSearchSelected }) {
   useEffect(() => {
     fetchStationsData();
   }, []);
+
   var stationdata = [];
   const fetchStationsData = async () => {
     try {
       const baseUrl = getBaseUrl();
       const response = await fetch(`${baseUrl}get-MapData`);
       stationdata = await response.json();
-      // console.log("Fetched stations data:", stationdata);
       getUserLocation();
     } catch (error) {
       console.error("Error fetching stations:", error);
@@ -35,7 +35,7 @@ function Navbar({ onSearchSelected }) {
         }
       );
     } else {
-      // console.log("Geolocation is not supported by this browser.");
+      console.log("Geolocation is not supported by this browser.");
     }
   };
 
@@ -50,8 +50,6 @@ function Navbar({ onSearchSelected }) {
 
     stationdata.forEach((station) => {
       const distance = getDistanceFromLatLonInKm(userLat, userLong, station.Latitude, station.Longitude);
-      // console.log(`Distance to ${station.Station}: ${distance} km`);
-
       if (distance < minDistance) {
         minDistance = distance;
         nearestStation = station.Station;
@@ -61,7 +59,7 @@ function Navbar({ onSearchSelected }) {
     if (nearestStation) {
       setSearchTerm(nearestStation);
       onSearchSelected(nearestStation);
-      performSearch(nearestStation); // Assuming this function is used to handle the selected suggestion.
+      performSearch(nearestStation);
     } else {
       console.error("No nearest station found.");
     }
@@ -94,7 +92,7 @@ function Navbar({ onSearchSelected }) {
 
   const selectSuggestion = (suggestion) => {
     setSearchTerm(suggestion);
-    setSuggestions([]); // Clear suggestions when a suggestion is selected
+    setSuggestions([]);
     performSearch(suggestion);
     onSearchSelected(suggestion);
   };
@@ -107,14 +105,13 @@ function Navbar({ onSearchSelected }) {
     const apiUrl = `${baseUrl}${endpoint}?${new URLSearchParams(queryParams)}`;
     setUrl(apiUrl);
     setStationName(selectedSuggestion);
-    // console.log(`Performing a search with the selected suggestion: ${apiUrl}`);
   };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
   useEffect(() => {
-    // Make an API call to fetch the data when searchTerm changes
     if (searchTerm.length >= 3) {
       const baseUrl = getBaseUrl()
       fetch(`${baseUrl}get-stations/?pol_Station=${searchTerm}`)
@@ -127,21 +124,23 @@ function Navbar({ onSearchSelected }) {
         });
     }
   }, [searchTerm]);
+
   const showSuggestions = suggestions.length > 0 && searchTerm !== "";
   const handleFocus = () => {
     setSearchTerm('');
   };
+
   return (
     <nav className="sticky top-0 z-10 bg-white backdrop-filter backdrop-blur-2xl bg-opacity-10 shadow-2xl border-slate-800">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" className="flex items-center gap-3">
-          <img src="/logo.jpeg" className="h-8 bg-transparent rounded-2xl" alt="Udyan Sathi Logo" />
-          <span className="text-2xl text-black font-semibold"> Udyan Sathi </span>
+          <img src="/logo.jpeg" className="lg:h-12 h-10 bg-transparent rounded-full" alt="Udyan Sathi Logo" />
+          <span className="lg:text-3xl text-xl text-black font-semibold"> Udyan Sathi </span>
         </a>
         <div className="md:hidden">
           <button
             type="button"
-            className="bg-transparent dark:bg-transparent hover:bg-transparent dark:hover:bg-transparent focus:ring-4 focus:ring-gray-200 dark:focus:ring-transparent rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-400 border-transparent hover:border-gray-500 dark:hover:border-gray-400 text-sm p-2.5 mr-1"
+            className="bg-transparent hover:bg-transparent focus:ring-4 focus:ring-gray-200 rounded-lg text-gray-500 hover:text-gray-700 text-sm p-2.5 mr-1"
             onClick={toggleMobileMenu}
           >
             <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -167,7 +166,7 @@ function Navbar({ onSearchSelected }) {
             <div className="relative hidden md:block">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
-                  className="w-4 h-4 text-black "
+                  className="w-4 h-4 text-black"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -180,7 +179,7 @@ function Navbar({ onSearchSelected }) {
               <input
                 type="text"
                 id="search-navbar"
-                className="block w-full p-2 pl-10 text-sm  border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
+                className="block w-full p-2 pl-10 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => updateSuggestions(e.target.value)}
@@ -209,11 +208,25 @@ function Navbar({ onSearchSelected }) {
         <input
           type="text"
           id="search-navbar"
-          className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Search..."
           value={searchTerm}
           onChange={(e) => updateSuggestions(e.target.value)}
+          onFocus={handleFocus}
         />
+        {showSuggestions && (
+          <div className="suggestions mt-2 bg-white border border-gray-200 rounded max-h-80 overflow-y-auto">
+            {suggestions.map((suggestion, index) => (
+              <div
+                key={index}
+                className="suggestion p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => selectSuggestion(suggestion)}
+              >
+                {suggestion}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </nav>
   );

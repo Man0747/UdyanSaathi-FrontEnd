@@ -115,16 +115,16 @@ function AirQualityPage() {
         </div>
       </div>
       <div className="flex flex-col relative m-5 gap-5">
-      <div className="w-full  shadow-custom-shadow m-3 rounded-2xl bg-white">
+      <div className="w-full z-0 shadow-custom-shadow rounded-2xl bg-white">
         <Map  selectedSearch={selectedSearch}/>
       </div>
       </div>
       {/* AQI PAGE ROW 2 */}
       <div className="flex flex-col lg:flex-row relative m-5 gap-3">
-        <div className="lg:w-[30%] w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+        <div className="lg:w-[30%] w-full shadow-custom-shadow rounded-2xl bg-white">
           <Component3 />
         </div>
-        <div className="lg:w-[70%] w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+        <div className="lg:w-[70%] w-full shadow-custom-shadow rounded-2xl bg-white">
           <Component4 />
         </div>
       </div>
@@ -133,10 +133,10 @@ function AirQualityPage() {
 
     {/* AQI PAGE ROW 3 */}
     <div className="flex flex-col lg:flex-row relative m-5 gap-3">
-      <div className="lg:w-[30%] w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+      <div className="lg:w-[30%] w-full shadow-custom-shadow rounded-2xl bg-white">
         <Component5 />
       </div>
-      <div className="lg:w-[70%] w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+      <div className="lg:w-[70%] w-full shadow-custom-shadow rounded-2xl bg-white">
         <Component6 />
       </div>
     </div>
@@ -144,12 +144,12 @@ function AirQualityPage() {
     
     <div className="flex flex-col relative m-5 gap-5">
       {/* AQI PAGE ROW 4 */}
-      <div className="w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+      <div className="w-full shadow-custom-shadow rounded-2xl bg-white">
         <Component7 />
       </div>
 
       {/* AQI PAGE ROW 5 */}
-      <div className="w-full shadow-custom-shadow m-3 rounded-2xl bg-white">
+      <div className="w-full shadow-custom-shadow rounded-2xl bg-white">
         <Component8 selectedSearch={selectedSearch} />
       </div>
 

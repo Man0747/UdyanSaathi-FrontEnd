@@ -60,16 +60,16 @@ const AqiDetails = ({selectedSearch}) => {
         <AnimatedBackground />
       </div>
       {pollution.map((pol) => (
-        <div key={pol.id} className="p-12 rounded-2xl relative z-10 flex flex-col gap-9">
+        <div key={pol.id} className="lg:p-12 p-8 rounded-2xl relative z-10 flex flex-col">
           <div className="mb-11">
-            <h1 className="lg:text-5xl text-4xl mb-3">{pol.Station}</h1>
-            <p className="text-slate-500 lg:text-base text-base">
+            <h1 className="lg:text-5xl text-2xl mb-3">{pol.Station}</h1>
+            <p className="text-slate-500 lg:text-lg text-xs">
               Real-time PM2.5, PM10 air pollution level {pol.State}
             </p>
           </div>
-          <div className="flex flex-row mt-4">
+          <div className="flex flex-row">
             <div className="flex flex-col justify-center gap-1">
-              <p className="text-slate-500 text-base">
+              <p className="text-slate-500 lg:text-lg text-xs">
                 Last Update: {pol.Pol_Date}
               </p>
               <button
@@ -82,11 +82,11 @@ const AqiDetails = ({selectedSearch}) => {
             <div className="p2 mx-auto flex flex-col items-center">
               <h1
                 style={{ color: state.color }}
-                className="lg:-mr-44 ml-12 lg:text-9xl text-7xl font-bold"
+                className="lg:-mr-44 lg:ml-12 ml-6 lg:text-9xl text-6xl font-bold"
               >
                 {pol.AQI}
               </h1>
-              <p className="lg:-mr-44 ml-12 text-slate-600">(AQI)</p>
+              <p className="lg:-mr-44 lg:ml-12 ml-6 text-slate-600">(AQI)</p>
             </div>
           </div>
         </div>
