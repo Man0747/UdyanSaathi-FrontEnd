@@ -112,8 +112,9 @@ const Component6 = () => {
     if (!rawdata.length || !compareRawdata.length) return; // Do not render if data is not available
 
     const svg = d3.select(chartRef.current);
-    const margin = { top: 20, right: 50, bottom: 60, left: 70 };
-    const width = 940 - margin.left - margin.right;
+    const containerWidth = chartRef.current.parentElement.offsetWidth;
+    const margin = { top: 20, right: 20, bottom: 60, left: 50 };
+    const width = containerWidth - margin.left - margin.right;
     const height = 370 - margin.top - margin.bottom;
 
     svg.selectAll("*").remove();
@@ -327,34 +328,34 @@ const Component6 = () => {
   };
 
   return (
-    <div class="C6-container mx-4 my-4 flex flex-col">
-    <div class="C6-top flex flex-col lg:flex-row lg:justify-between">
-        <div class="C6-txt">
-            <h1 class="C6-heading text-2xl text-[#33a0d3]">Historic Air Quality Data</h1>
-            <div class="mt-2 text-xs text-slate-500">
+    <div className="mx-4 my-4 flex flex-col">
+    <div className="flex flex-col lg:flex-row lg:justify-between">
+        <div >
+            <h1 className="text-2xl text-[#33a0d3]">Historic Air Quality Data</h1>
+            <div className="mt-2 text-xs text-slate-500">
                 <span>Explore insightful air pollution data for:</span>
-                <ul class="list-disc mt-1 ml-4">
+                <ul className="list-disc mt-1 ml-4">
                     <li>Last 24 hours</li>
                     <li>Last 7 days</li>
                     <li>Last 1 month</li>
                 </ul>
             </div>
         </div>
-        <div class="flex flex-col lg:flex-row gap-2 mt-2 lg:mt-0">
-            <div class="best bg-green-500 text-white rounded-lg p-1 flex justify-center items-center">
-                <span class="text-xs text-center">Best<br />{selectedOption}</span>
-                <h3 class="text-sm">{bestValue}</h3>
+        <div className="flex flex-col lg:flex-row gap-2 mt-2 lg:mt-0">
+            <div className="best bg-green-500 text-white rounded-lg p-1 flex justify-center items-center">
+                <span className="text-xs text-center">Best<br />{selectedOption}</span>
+                <h3 className="text-sm">{bestValue}</h3>
             </div>
-            <div class="worst bg-red-500 text-white rounded-lg p-1 mt-2 lg:mt-0 flex justify-center items-center">
-                <span class="text-xs text-center">Worst<br />{selectedOption}</span>
-                <h3 class="text-sm">{worstValue}</h3>
+            <div className="worst bg-red-500 text-white rounded-lg p-1 mt-2 lg:mt-0 flex justify-center items-center">
+                <span className="text-xs text-center">Worst<br />{selectedOption}</span>
+                <h3 className="text-sm">{worstValue}</h3>
             </div>
         </div>
     </div>
 
 
-      <div className="C6-graph">
-        <div className="flex flex-row items-center mb-5">
+      <div >
+        <div className="lg:flex lg:flex-row grid grid-cols-2 items-center mb-5">
           <select
             className="border border-gray-300 p-2 rounded-md mt-3"
             onChange={handleChange}
@@ -367,8 +368,20 @@ const Component6 = () => {
             ))}
           </select>
 
-          <Select
+          <select
             className="border border-gray-300 p-2 rounded-md mt-3 ml-3"
+            value={selectedTimeRange}
+            onChange={handleTimeRangeChange}
+          >
+            {filterOptions.map((filterOption) => (
+              <option key={filterOption} value={filterOption}>
+                {filterOption}
+              </option>
+            ))}
+          </select>
+
+          <Select
+            className="border  border-gray-300 p-2 rounded-md mt-3 ml-3"
             options={cityOptions}
             value={city}
             onChange={handleCityChange}
@@ -383,17 +396,7 @@ const Component6 = () => {
             isClearable
           />
 
-          <select
-            className="border border-gray-300 p-2 rounded-md mt-3 ml-3"
-            value={selectedTimeRange}
-            onChange={handleTimeRangeChange}
-          >
-            {filterOptions.map((filterOption) => (
-              <option key={filterOption} value={filterOption}>
-                {filterOption}
-              </option>
-            ))}
-          </select>
+          
         </div>
         <svg ref={chartRef}></svg>
         <div

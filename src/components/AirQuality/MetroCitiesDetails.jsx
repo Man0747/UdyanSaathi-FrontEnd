@@ -42,7 +42,7 @@ const Component7 = () => {
           <option value="29">Last 30 Days</option>
         </select>
       </div>
-
+      <div className="overflow-auto">
       <table className="table min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -78,6 +78,7 @@ const Component7 = () => {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

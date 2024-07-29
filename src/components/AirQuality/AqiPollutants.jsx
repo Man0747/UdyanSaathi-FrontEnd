@@ -42,13 +42,13 @@ const Component2 = ({ selectedSearch, onData }) => {
 
   return (
     <>
-      <div className="relative rounded-2xl p-9 flex flex-col justify-around h-full">
+      <div className="relative rounded-2xl lg:p-0 p-4 flex flex-col justify-around h-full">
         <div className="absolute inset-0 rounded-2xl">
           <AnimatedBackground />
         </div>
         <div className="mb-7 flex justify-center ">
           {pollution.map((pol) => (
-            <p key={pol.id} className="text-xl text-[#33a0d3]">
+            <p key={pol.id} className="mt-8 lg:text-[28px] text-center text-lg text-[#33a0d3]">
               Major Air pollutants in {pol.City}
             </p>
           ))}
